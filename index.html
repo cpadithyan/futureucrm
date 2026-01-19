@@ -13,11 +13,11 @@
         body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         .sidebar-active { background: rgba(59, 130, 246, 0.1); border-left: 4px solid #3b82f6; color: #3b82f6; }
         .bottom-nav-active { color: #3b82f6; font-weight: bold; }
-        .hidden { display: none; }
+        .hidden { display: none !important; }
         .modal-bg { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px); }
         
         @media (max-width: 768px) {
-            .hide-mobile { display: none; }
+            .hide-mobile { display: none !important; }
             .safe-area-pb { padding-bottom: 90px; }
         }
 
@@ -50,7 +50,7 @@
     <!-- Global Processing Overlay -->
     <div id="processing-overlay" class="fixed inset-0 z-[200] hidden flex flex-col items-center justify-center">
         <div class="loader w-14 h-14 border-4 mb-4"></div>
-        <p id="processing-text" class="font-bold text-blue-600 animate-pulse text-lg">Optimizing Data...</p>
+        <p id="processing-text" class="font-bold text-blue-600 animate-pulse text-lg text-center">Syncing FutureU Data...</p>
     </div>
 
     <!-- Auth Overlay -->
@@ -61,16 +61,16 @@
                     <i class="fas fa-rocket"></i>
                 </div>
                 <h1 class="text-2xl font-bold text-gray-900">FutureU CRM</h1>
-                <p class="text-gray-500 text-sm mt-1">Enterprise Sales Engine</p>
+                <p class="text-gray-500 text-sm mt-1">Enterprise Lead Engine</p>
             </div>
             <div class="space-y-4">
                 <div id="login-error" class="hidden p-3 bg-red-50 text-red-600 text-xs rounded-xl text-center font-bold"></div>
                 <input type="text" id="login-id" class="w-full p-5 bg-gray-50 border rounded-2xl outline-none focus:ring-2 ring-blue-500" placeholder="Employee ID">
                 <input type="password" id="login-pass" class="w-full p-5 bg-gray-50 border rounded-2xl outline-none focus:ring-2 ring-blue-500" placeholder="Password">
                 <button onclick="handleLogin()" id="login-btn" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-bold hover:bg-blue-700 transition shadow-lg flex justify-center items-center gap-2">
-                    Start Session
+                    Verify & Login
                 </button>
-                <p class="text-[10px] text-center text-gray-400 mt-4 uppercase font-bold tracking-widest">Admin: admin_01 / admin@123</p>
+                <p class="text-[10px] text-center text-gray-400 mt-4 uppercase font-bold tracking-widest">FutureU</p>
             </div>
         </div>
     </div>
@@ -120,13 +120,13 @@
                 <!-- Dashboard View -->
                 <section id="view-dashboard" class="view space-y-6 fade-in">
                     <div class="flex flex-col md:flex-row justify-between md:items-center">
-                        <h1 class="text-2xl font-bold">Institute Analytics</h1>
-                        <p class="text-xs font-bold text-blue-500 uppercase tracking-widest bg-blue-50 px-3 py-1 rounded-full">Real-time Cloud Sync</p>
+                        <h1 class="text-2xl font-bold">Performance</h1>
+                        <p class="text-xs font-bold text-blue-500 uppercase tracking-widest bg-blue-50 px-3 py-1 rounded-full">Cloud Active</p>
                     </div>
 
                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
                         <div class="bg-white p-6 rounded-[1.5rem] border shadow-sm">
-                            <p class="text-gray-400 text-[10px] font-bold uppercase">Active Leads</p>
+                            <p class="text-gray-400 text-[10px] font-bold uppercase">Leads</p>
                             <h3 class="text-2xl font-bold mt-1" id="stat-total">0</h3>
                         </div>
                         <div class="bg-green-600 p-6 rounded-[1.5rem] text-white shadow-lg shadow-green-100">
@@ -134,25 +134,24 @@
                             <h3 class="text-2xl font-bold mt-1" id="stat-converted">0</h3>
                         </div>
                         <div class="bg-white p-6 rounded-[1.5rem] border shadow-sm text-orange-500">
-                            <p class="text-gray-400 text-[10px] font-bold uppercase">Due Today</p>
+                            <p class="text-gray-400 text-[10px] font-bold uppercase">Dues</p>
                             <h3 class="text-2xl font-bold mt-1" id="stat-pending">0</h3>
                         </div>
                         <div class="bg-white p-6 rounded-[1.5rem] border shadow-sm text-red-500">
-                            <p class="text-gray-400 text-[10px] font-bold uppercase">Rejected</p>
+                            <p class="text-gray-400 text-[10px] font-bold uppercase">Rejects</p>
                             <h3 class="text-2xl font-bold mt-1" id="stat-rejected">0</h3>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div class="lg:col-span-2 bg-white p-6 rounded-[2rem] border shadow-sm">
-                            <h4 class="font-bold mb-4 flex items-center gap-2"><i class="fas fa-chart-bar text-blue-500"></i> Conversion Funnel</h4>
+                            <h4 class="font-bold mb-4 flex items-center gap-2"><i class="fas fa-chart-bar text-blue-500"></i> Funnel</h4>
                             <div class="h-64 relative"><canvas id="analyticsChart"></canvas></div>
                         </div>
                         <div class="bg-gray-900 p-6 rounded-[2rem] text-white flex flex-col">
-                            <h4 class="font-bold mb-4 flex items-center gap-2"><i class="fas fa-crown text-yellow-400"></i> Top Closers</h4>
-                            <div id="leaderboard" class="space-y-4 overflow-y-auto flex-1 text-sm">
-                                <!-- Leaderboard injected -->
-                                <p class="text-gray-500 text-center py-10">Waiting for data...</p>
+                            <h4 class="font-bold mb-4 flex items-center gap-2"><i class="fas fa-crown text-yellow-400"></i> Best Closers</h4>
+                            <div id="leaderboard" class="space-y-4 overflow-y-auto flex-1 text-sm scroll-container">
+                                <p class="text-gray-500 text-center py-10">Updating rankings...</p>
                             </div>
                         </div>
                     </div>
@@ -175,7 +174,6 @@
                         </div>
                     </div>
 
-                    <!-- Filter Bar -->
                     <div class="bg-white p-3 rounded-2xl border flex flex-col gap-2">
                         <div class="relative">
                             <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
@@ -195,14 +193,17 @@
                                 <option value="followup">Due First</option>
                             </select>
                         </div>
+                        <select id="filter-list" onchange="debouncedRenderLeads()" class="p-4 bg-gray-50 rounded-xl font-bold text-sm outline-none border-none w-full">
+                            <option value="all">All Marketing Lists</option>
+                        </select>
                     </div>
 
-                    <!-- Batch Actions (Conditional) -->
+                    <!-- Batch Actions -->
                     <div id="batch-actions" class="hidden bg-blue-600 p-4 rounded-2xl flex justify-between items-center text-white shadow-xl">
                         <span id="selected-count" class="font-bold">0 Selected</span>
                         <div class="flex gap-2">
-                            <button onclick="batchStatusUpdate()" class="bg-white text-blue-600 px-4 py-2 rounded-xl text-xs font-bold uppercase">Update Status</button>
-                            <button onclick="batchDelete()" class="bg-red-500 text-white px-4 py-2 rounded-xl text-xs font-bold uppercase">Delete</button>
+                            <button onclick="batchStatusUpdate()" class="bg-white text-blue-600 px-4 py-2 rounded-xl text-xs font-bold uppercase">Status</button>
+                            <button onclick="batchDelete()" class="bg-red-500 text-white px-4 py-2 rounded-xl text-xs font-bold uppercase">Del</button>
                             <button onclick="toggleSelectMode(false)" class="text-white px-2"><i class="fas fa-times"></i></button>
                         </div>
                     </div>
@@ -226,7 +227,7 @@
                     <div class="bg-blue-50 p-6 rounded-3xl border border-blue-100 flex items-center justify-between">
                         <div>
                             <h4 class="font-bold text-blue-900">Auto-Distribute Mode</h4>
-                            <p class="text-xs text-blue-700">Fairly rotate leads between all active staff during import.</p>
+                            <p class="text-xs text-blue-700">Fairly rotate leads between all staff on import.</p>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="auto-assign-toggle" class="sr-only peer">
@@ -242,7 +243,7 @@
                     <div class="flex justify-between items-center">
                         <h1 class="text-2xl font-bold">Team</h1>
                         <button onclick="openStaffModal()" class="bg-black text-white px-6 py-3 rounded-2xl font-bold active:scale-95 transition">
-                            <i class="fas fa-user-plus"></i>
+                            <i class="fas fa-user-plus"></i> Add Staff
                         </button>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="staff-container"></div>
@@ -272,21 +273,9 @@
         </nav>
     </div>
 
-    <!-- Modals -->
-    <!-- WA Template Picker -->
-    <div id="wa-modal" class="fixed inset-0 z-[130] hidden flex items-center justify-center p-4 modal-bg">
-        <div class="bg-white rounded-[2.5rem] w-full max-w-sm shadow-2xl p-8 space-y-6">
-            <h3 class="text-xl font-bold text-center">Send WhatsApp</h3>
-            <div class="space-y-2" id="wa-templates">
-                <!-- Templates generated -->
-            </div>
-            <button onclick="document.getElementById('wa-modal').classList.add('hidden')" class="w-full text-gray-400 font-bold py-2">Cancel</button>
-        </div>
-    </div>
-
     <!-- AI Modal -->
     <div id="ai-modal" class="fixed inset-0 z-[120] hidden flex items-center justify-center p-4 modal-bg">
-        <div class="bg-white rounded-[2rem] w-full max-w-lg shadow-2xl overflow-hidden p-8 space-y-6 ai-glow">
+        <div class="bg-white rounded-[2rem] w-full max-w-lg shadow-2xl overflow-hidden p-8 space-y-6">
             <div class="flex justify-between items-center">
                 <h3 class="text-xl font-bold text-blue-600 flex items-center gap-2"><i class="fas fa-magic"></i> FutureU AI</h3>
                 <button onclick="document.getElementById('ai-modal').classList.add('hidden')" class="text-gray-400"><i class="fas fa-times"></i></button>
@@ -296,7 +285,7 @@
         </div>
     </div>
 
-    <!-- Lead Modal with Timeline -->
+    <!-- Lead Modal -->
     <div id="lead-modal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 modal-bg">
         <div class="bg-white rounded-[2.5rem] w-full max-w-lg shadow-2xl overflow-hidden flex flex-col h-[90vh]">
             <div class="p-6 border-b flex justify-between items-center bg-gray-50">
@@ -307,16 +296,15 @@
                 <div class="space-y-4">
                     <input type="text" id="lead-name" placeholder="Candidate Name" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border">
                     <input type="tel" id="lead-phone" placeholder="Phone Number" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border">
-                    <input type="text" id="lead-course" placeholder="Interested Course (BBA, MBA, IT...)" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border">
+                    <input type="text" id="lead-course" placeholder="Interested Course" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border">
                     <div>
                         <label class="text-[10px] font-bold text-gray-400 uppercase ml-2 mb-1 block">Scheduled Follow-up</label>
                         <input type="date" id="lead-followup" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border">
                     </div>
                     <textarea id="lead-notes" rows="2" placeholder="Recent Conversation Notes..." class="w-full p-4 bg-gray-50 rounded-2xl outline-none border"></textarea>
                 </div>
-                
                 <div id="lead-history-section" class="hidden space-y-4 border-t pt-6">
-                    <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Lead Timeline</h4>
+                    <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Timeline</h4>
                     <div id="lead-history-list" class="space-y-3"></div>
                 </div>
             </div>
@@ -331,8 +319,8 @@
         <div class="bg-white rounded-[2rem] w-full max-w-md shadow-2xl p-8 space-y-6">
             <h3 class="text-xl font-bold text-center">New Employee</h3>
             <div class="space-y-4">
-                <input type="text" id="staff-name" placeholder="Employee Name" class="w-full p-4 bg-gray-50 rounded-2xl border outline-none">
-                <input type="text" id="staff-id" placeholder="Login ID (EMP01)" class="w-full p-4 bg-gray-50 rounded-2xl border outline-none">
+                <input type="text" id="staff-name" placeholder="Full Name" class="w-full p-4 bg-gray-50 rounded-2xl border outline-none">
+                <input type="text" id="staff-id" placeholder="Login ID (e.g. EMP01)" class="w-full p-4 bg-gray-50 rounded-2xl border outline-none">
                 <input type="text" id="staff-pass" placeholder="Password" class="w-full p-4 bg-gray-50 rounded-2xl border outline-none">
             </div>
             <div class="flex gap-3">
@@ -350,7 +338,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, query, onSnapshot, updateDoc, deleteDoc, addDoc, Timestamp, arrayUnion } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, updateDoc, deleteDoc, addDoc, Timestamp, arrayUnion } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
             apiKey: "AIzaSyAraa3TDkLEs0tj0REa918PjlD_GAuHL0c",
@@ -361,13 +349,13 @@
             appId: "1:958261959120:web:7938f2e4dedcbffc0bc1d5"
         };
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'telecrm-c0cd8';
-        const apiKey = ""; // Set by environment
+        const apiKey = ""; 
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // State
+        // Persistent State
         let user = null;
         let leads = [];
         let staff = [];
@@ -378,6 +366,7 @@
         let selectMode = false;
         let selectedLeads = new Set();
         let renderLimit = 50;
+        let renderTimeout = null;
 
         // --- AUTH ---
         const initAuth = async () => {
@@ -415,7 +404,7 @@
                 } else {
                     notify("Invalid Login Details", "error");
                 }
-            } catch (err) { notify("Auth Error"); }
+            } catch (err) { notify("Cloud Auth Error"); }
         };
 
         function proceedLogin(userData) {
@@ -426,7 +415,7 @@
 
         window.logout = () => { localStorage.removeItem('crm_session_v2'); location.reload(); };
 
-        // --- CORE APP ---
+        // --- APP INITIALIZATION & LISTENERS ---
         function setupApp() {
             if (!user) return;
             document.getElementById('auth-overlay').classList.add('hidden');
@@ -437,45 +426,59 @@
 
             if (window.currentUser.role !== 'admin') document.querySelectorAll('.admin-only').forEach(e => e.remove());
             
-            Notification.requestPermission();
-
+            // Core Sync Logic: Full Collection Listeners for immediate visibility
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'leads'), (snap) => {
                 leads = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                if (!isProcessing) { renderLeads(); updateStats(); updateChart(); updateLeaderboard(); }
-            });
+                refreshAllUI();
+            }, (err) => notify("Leads Sync Error"));
 
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'users'), (snap) => {
                 staff = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                 if (window.currentUser.role === 'admin') renderStaff();
-            });
+                refreshAllUI();
+            }, (err) => notify("Staff Sync Error"));
 
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'lead_groups'), (snap) => {
                 leadLists = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                 updateListFilters();
                 if(window.currentUser.role === 'admin') renderLists();
-            });
+                refreshAllUI();
+            }, (err) => notify("Lists Sync Error"));
 
             showView('dashboard');
         }
 
+        function refreshAllUI() {
+            if (isProcessing) return;
+            debouncedRenderLeads();
+            updateStats();
+            updateChart();
+            updateLeaderboard();
+        }
+
         window.showView = (name) => {
             document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
-            document.getElementById('view-' + name).classList.remove('hidden');
-            document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('sidebar-active'));
-            document.getElementById('btn-' + name).classList.add('sidebar-active');
+            const targetView = document.getElementById('view-' + name);
+            if (targetView) targetView.classList.remove('hidden');
             
-            // Bottom Nav Sync
+            document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('sidebar-active'));
+            const desktopBtn = document.getElementById('btn-' + name);
+            if (desktopBtn) desktopBtn.classList.add('sidebar-active');
+
             document.querySelectorAll('.bottom-nav-btn').forEach(b => b.classList.remove('bottom-nav-active'));
             const mobileBtn = document.getElementById('m-btn-' + name);
             if(mobileBtn) mobileBtn.classList.add('bottom-nav-active');
 
             if (name === 'dashboard') updateChart();
             if (name === 'leads') renderLeads();
+            if (name === 'lists') renderLists();
+            if (name === 'staff') renderStaff();
         };
 
-        // --- DASHBOARD OPTIMIZATIONS ---
+        // --- DASHBOARD ---
         function updateLeaderboard() {
             const container = document.getElementById('leaderboard');
+            if (!container) return;
             const stats = staff.map(s => {
                 const count = leads.filter(l => l.assignedTo === s.id && l.status === 'converted').length;
                 return { name: s.name, count };
@@ -489,21 +492,79 @@
                     </div>
                     <span class="text-xs bg-green-500 text-white px-3 py-1 rounded-full font-black">${s.count} ADM</span>
                 </div>
-            `).join('');
+            `).join('') || '<p class="text-gray-500 text-center py-10 italic">No closers yet.</p>';
         }
 
-        // --- LEADS RENDERING ---
+        // --- LISTS & STAFF ---
+        function renderLists() {
+            const container = document.getElementById('lists-container');
+            if(!container) return;
+            container.innerHTML = leadLists.map(list => {
+                const listLeads = leads.filter(l => l.listId === list.id);
+                const assignedTelecallerId = listLeads.length > 0 ? listLeads[0].assignedTo : '';
+                return `
+                    <div class="bg-white p-6 rounded-3xl border shadow-sm space-y-4 fade-in">
+                        <div class="flex justify-between items-start">
+                            <div class="flex-1">
+                                <h4 class="font-bold text-lg cursor-pointer hover:text-blue-600" onclick="window.renameList('${list.id}')">${list.name}</h4>
+                                <p class="text-xs text-gray-400 uppercase font-bold tracking-widest">${listLeads.length} Total Leads</p>
+                            </div>
+                            <button onclick="window.deleteList('${list.id}')" class="text-red-300 hover:text-red-500 p-2"><i class="fas fa-trash"></i></button>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Team Assignment</label>
+                            <select onchange="window.bulkAssignList('${list.id}', this.value)" class="w-full p-4 bg-gray-50 rounded-2xl text-sm border-none outline-none font-bold">
+                                <option value="">Select Staff...</option>
+                                ${staff.map(s => `<option value="${s.id}" ${assignedTelecallerId === s.id ? 'selected' : ''}>${s.name}</option>`).join('')}
+                            </select>
+                        </div>
+                    </div>
+                `;
+            }).join('') || '<div class="col-span-full py-20 text-center text-gray-400 italic">No marketing lists found. Upload one to start.</div>';
+        }
+
+        function renderStaff() {
+            const container = document.getElementById('staff-container');
+            if(!container) return;
+            container.innerHTML = staff.map(s => {
+                const staffLeads = leads.filter(l => l.assignedTo === s.id);
+                return `<div class="bg-white p-6 rounded-3xl border shadow-sm">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 font-bold text-xl">${s.name.charAt(0)}</div>
+                        <button onclick="window.deleteStaff('${s.id}')" class="text-red-300 hover:text-red-500 p-2"><i class="fas fa-trash"></i></button>
+                    </div>
+                    <h4 class="font-bold text-lg">${s.name}</h4>
+                    <p class="text-xs text-gray-400 font-mono mt-1 uppercase tracking-widest">ID: ${s.id}</p>
+                    <div class="mt-4 flex justify-between border-t pt-4"><span class="text-[10px] font-bold text-gray-400 uppercase">Leads Bucket</span><span class="text-sm font-bold text-blue-600">${staffLeads.length}</span></div>
+                </div>`;
+            }).join('') || '<div class="col-span-full py-20 text-center text-gray-400 italic">No employees added yet.</div>';
+        }
+
+        function updateListFilters() {
+            const filterSelect = document.getElementById('filter-list');
+            if(!filterSelect) return;
+            const currentVal = filterSelect.value;
+            let optionsHtml = '<option value="all">All Marketing Lists</option>';
+            const visibleLists = window.currentUser.role === 'admin' ? leadLists : leadLists.filter(gl => leads.some(l => l.listId === gl.id && l.assignedTo === window.currentUser.id));
+            optionsHtml += visibleLists.map(gl => `<option value="${gl.id}">${gl.name}</option>`).join('');
+            filterSelect.innerHTML = optionsHtml;
+            filterSelect.value = currentVal;
+        }
+
+        // --- LEADS ---
         window.renderLeads = () => {
             const container = document.getElementById('leads-container');
             if (!container) return;
 
             const statusFilter = document.getElementById('filter-status').value;
+            const listFilter = document.getElementById('filter-list').value;
             const sortOrder = document.getElementById('sort-order').value;
             const searchQuery = (document.getElementById('search-input')?.value || "").toLowerCase();
 
             let filtered = [...leads];
             if (window.currentUser.role !== 'admin') filtered = filtered.filter(l => l.assignedTo === window.currentUser.id);
             if (statusFilter !== 'all') filtered = filtered.filter(l => l.status === statusFilter);
+            if (listFilter !== 'all') filtered = filtered.filter(l => l.listId === listFilter);
             if (searchQuery) filtered = filtered.filter(l => (l.name && l.name.toLowerCase().includes(searchQuery)) || (l.phone && l.phone.includes(searchQuery)));
 
             if (sortOrder === 'name') filtered.sort((a,b) => (a.name || "").localeCompare(b.name || ""));
@@ -515,29 +576,27 @@
 
             container.innerHTML = displaySubset.map(l => {
                 const isDue = l.followup && l.followup <= today && l.status !== 'converted' && l.status !== 'rejected';
+                const listName = leadLists.find(gl => gl.id === l.listId)?.name || 'Manual';
                 return `
                 <div class="bg-white p-5 app-card border shadow-sm space-y-4 fade-in ${isDue ? 'border-orange-200 bg-orange-50/20' : ''}">
                     <div class="flex justify-between items-start">
                         <div class="flex items-start gap-3">
-                            ${selectMode ? `<input type="checkbox" onchange="toggleLeadSelection('${l.id}')" ${selectedLeads.has(l.id) ? 'checked' : ''} class="w-6 h-6 mt-1 rounded-full border-2 border-gray-200">` : ''}
+                            ${selectMode ? `<input type="checkbox" onchange="window.toggleLeadSelection('${l.id}')" ${selectedLeads.has(l.id) ? 'checked' : ''} class="w-6 h-6 mt-1">` : ''}
                             <div class="flex-1">
                                 <h3 class="text-lg font-bold flex items-center gap-2" onclick="window.inlineEdit('${l.id}', 'name')">
-                                    ${l.name || '<span class="text-gray-300">Unlabeled</span>'}
+                                    ${l.name || '<span class="text-gray-300">New Inquiry</span>'}
                                     ${isDue ? '<span class="w-2 h-2 bg-orange-500 rounded-full animate-ping"></span>' : ''}
                                 </h3>
-                                <p class="text-sm font-mono text-gray-500 flex items-center gap-2">
-                                    ${l.phone} 
-                                    <a href="https://www.truecaller.com/search/in/${l.phone.replace(/\D/g,'')}" target="_blank" class="text-blue-400 text-xs"><i class="fas fa-check-circle"></i> Verify</a>
-                                </p>
-                                <div class="flex gap-1 mt-1">
-                                    ${l.course ? `<span class="text-[9px] bg-blue-100 text-blue-600 px-2 py-0.5 rounded font-black uppercase">${l.course}</span>` : ''}
-                                    ${l.followup ? `<span class="text-[9px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded font-bold">📅 ${l.followup}</span>` : ''}
+                                <p class="text-sm font-mono text-gray-500">${l.phone}</p>
+                                <div class="flex flex-wrap gap-1 mt-1">
+                                    <span class="text-[8px] bg-blue-50 text-blue-500 px-2 py-0.5 rounded font-black uppercase">${listName}</span>
+                                    ${l.followup ? `<span class="text-[8px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded font-bold">📅 ${l.followup}</span>` : ''}
                                 </div>
                             </div>
                         </div>
                         <div class="flex flex-col items-end gap-2">
-                            <button onclick="window.getAIPitch('${l.id}')" class="text-blue-500 bg-blue-50 w-8 h-8 rounded-full flex items-center justify-center hover:bg-blue-100 transition"><i class="fas fa-magic text-xs"></i></button>
-                            <select onchange="window.updateStatus('${l.id}', this.value)" class="text-[10px] font-bold px-3 py-1 rounded-xl border-none outline-none ${getStatusStyle(l.status)}">
+                             <button onclick="window.getAIPitch('${l.id}')" class="text-blue-500 bg-blue-50 w-8 h-8 rounded-full flex items-center justify-center hover:bg-blue-100 transition"><i class="fas fa-magic text-xs"></i></button>
+                            <select onchange="window.updateStatus('${l.id}', this.value)" class="text-[10px] font-black px-3 py-1.5 rounded-xl border-none outline-none ${getStatusStyle(l.status)}">
                                 <option value="new" ${l.status === 'new' ? 'selected' : ''}>NEW</option>
                                 <option value="follow-up" ${l.status === 'follow-up' ? 'selected' : ''}>FOLLOW-UP</option>
                                 <option value="converted" ${l.status === 'converted' ? 'selected' : ''}>CONVERTED</option>
@@ -546,86 +605,39 @@
                         </div>
                     </div>
                     <div class="grid grid-cols-4 gap-2">
-                        <a href="tel:${l.phone}" class="col-span-2 bg-blue-600 text-white h-14 rounded-2xl flex items-center justify-center gap-2 font-bold shadow-lg active:scale-95 transition">
+                        <a href="tel:${l.phone}" class="col-span-2 bg-blue-600 text-white h-14 rounded-2xl flex items-center justify-center gap-2 font-black shadow-lg active:scale-95 transition">
                             <i class="fas fa-phone-alt"></i> CALL
                         </a>
-                        <button onclick="pickWATemplate('${l.id}')" class="bg-green-100 text-green-600 rounded-2xl flex items-center justify-center active:scale-95 transition"><i class="fab fa-whatsapp text-2xl"></i></button>
+                        <button onclick="window.openWA('${l.id}')" class="bg-green-100 text-green-600 rounded-2xl flex items-center justify-center active:scale-95 transition"><i class="fab fa-whatsapp text-2xl"></i></button>
                         <button onclick="window.shareLead('${l.id}')" class="bg-gray-100 text-gray-500 rounded-2xl flex items-center justify-center active:scale-95 transition"><i class="fas fa-share-alt"></i></button>
                     </div>
-                    <div class="flex justify-between border-t pt-3">
-                         <span class="text-[9px] text-gray-400 font-bold">LAST ACT: ${l.updatedAt?.toDate().toLocaleDateString() || '--'}</span>
+                    <div class="flex justify-between items-center border-t pt-3">
+                         <span class="text-[9px] text-gray-400 font-bold">MOD: ${l.updatedAt?.toDate().toLocaleDateString() || '--'}</span>
                          <div class="flex gap-4">
-                            <button onclick="window.openLeadModal('${l.id}')" class="text-blue-500 font-bold text-xs uppercase tracking-widest">Profile</button>
-                            ${window.currentUser.role === 'admin' ? `<button onclick="window.deleteLead('${l.id}')" class="text-red-300 font-bold text-xs uppercase">Del</button>` : ''}
+                            <button onclick="window.openLeadModal('${l.id}')" class="text-blue-500 font-bold text-[10px] uppercase">Details</button>
+                            ${window.currentUser.role === 'admin' ? `<button onclick="window.deleteLead('${l.id}')" class="text-red-300 font-bold text-[10px] uppercase">Del</button>` : ''}
                          </div>
                     </div>
                 </div>
-            `;}).join('');
+            `;}).join('') || '<div class="py-20 text-center text-gray-400 italic">Bucket is empty.</div>';
 
             document.getElementById('load-more-btn').classList.toggle('hidden', filtered.length <= renderLimit);
         };
 
-        // --- BATCH ACTIONS ---
-        window.toggleSelectMode = (force) => {
-            selectMode = force !== undefined ? force : !selectMode;
-            selectedLeads.clear();
-            document.getElementById('batch-actions').classList.toggle('hidden', !selectMode);
-            renderLeads();
-        };
-
-        window.toggleLeadSelection = (id) => {
-            if(selectedLeads.has(id)) selectedLeads.delete(id);
-            else selectedLeads.add(id);
-            document.getElementById('selected-count').innerText = `${selectedLeads.size} Selected`;
-        };
-
-        window.batchDelete = async () => {
-            if(confirm(`Delete ${selectedLeads.size} leads permanently?`)){
-                setProcessing(true, "Batch Deleting...");
-                for(let id of selectedLeads) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', id));
-                toggleSelectMode(false);
-                setProcessing(false);
-            }
-        };
-
-        window.batchStatusUpdate = async () => {
-            const newStatus = prompt("Update selected to (new, follow-up, converted, rejected):", "follow-up");
-            if(newStatus && ['new','follow-up','converted','rejected'].includes(newStatus)){
-                setProcessing(true, "Updating Batch...");
-                for(let id of selectedLeads) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', id), { status: newStatus, updatedAt: Timestamp.now() });
-                toggleSelectMode(false);
-                setProcessing(false);
-            }
-        };
-
-        // --- WHATSAPP TEMPLATES ---
-        window.pickWATemplate = (id) => {
-            const l = leads.find(x => x.id === id);
-            const templates = [
-                { name: "Inquiry Intro", text: `Hi ${l.name || 'there'}, this is from FutureU Institute regarding your inquiry. Please let us know a good time to call.` },
-                { name: "Follow-up", text: `Hello ${l.name || 'there'}, we didn't hear back from you. Are you still interested in our professional courses?` },
-                { name: "Admission Info", text: `Greetings! Admissions are closing for the current batch. Visit our office or call us for the brochure.` }
-            ];
-            
-            document.getElementById('wa-templates').innerHTML = templates.map((t, idx) => `
-                <button onclick="window.openWA('${id}', '${t.text.replace(/'/g, "\\'")}')" class="w-full text-left p-4 bg-gray-50 rounded-2xl border hover:bg-green-50 hover:border-green-100 transition">
-                    <p class="text-[10px] font-bold text-green-600 uppercase mb-1">${t.name}</p>
-                    <p class="text-xs text-gray-700 italic">${t.text.substring(0, 60)}...</p>
-                </button>
-            `).join('');
-            document.getElementById('wa-modal').classList.remove('hidden');
-        };
-
-        window.openWA = (id, msg) => {
+        // --- GLOBAL ACTIONS ---
+        window.debouncedRenderLeads = () => { if(renderTimeout) clearTimeout(renderTimeout); renderTimeout = setTimeout(renderLeads, 200); };
+        window.loadMoreLeads = () => { renderLimit += 50; renderLeads(); };
+        window.setProcessing = (v, text) => { isProcessing = v; document.getElementById('processing-text').innerText = text || "Syncing..."; document.getElementById('processing-overlay').classList.toggle('hidden', !v); };
+        window.notify = (m) => { const t = document.getElementById('toast'); document.getElementById('toast-msg').innerText = m; t.classList.remove('translate-y-20', 'opacity-0'); setTimeout(() => t.classList.add('translate-y-20', 'opacity-0'), 3000); };
+        
+        window.openWA = (id) => {
             const l = leads.find(x => x.id === id);
             if (!l) return;
             let p = l.phone.replace(/\D/g, '');
             if (p.length === 10) p = '91' + p; 
-            window.open(`https://wa.me/${p}?text=${encodeURIComponent(msg)}`, '_blank');
-            document.getElementById('wa-modal').classList.add('hidden');
+            window.open(`https://wa.me/${p}?text=${encodeURIComponent('Hello ' + (l.name || 'there') + ', this is FutureU Institute. Are you still interested in the program?')}`, '_blank');
         };
 
-        // --- CRUD & LOGGING ---
         window.saveLead = async () => {
             const data = {
                 name: document.getElementById('lead-name').value.trim(),
@@ -635,31 +647,17 @@
                 followup: document.getElementById('lead-followup').value,
                 updatedAt: Timestamp.now()
             };
-            if (!data.name || !data.phone) return notify("Missing Info");
-
-            setProcessing(true, "Syncing Profile...");
+            if (!data.name || !data.phone) return notify("Name & Phone Required");
+            setProcessing(true, "Saving Lead...");
             try {
-                const historyEntry = {
-                    date: new Date().toLocaleString(),
-                    user: window.currentUser.name,
-                    note: data.notes || "Updated profile"
-                };
-
                 if (editingLeadId) {
-                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', editingLeadId), {
-                        ...data,
-                        history: arrayUnion(historyEntry)
-                    });
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', editingLeadId), { ...data, history: arrayUnion({ date: new Date().toLocaleString(), user: window.currentUser.name, note: data.notes || "Profile update" }) });
                 } else {
-                    data.status = 'new'; 
-                    data.assignedTo = window.currentUser.id; 
-                    data.createdAt = Timestamp.now();
-                    data.history = [historyEntry];
+                    data.status = 'new'; data.assignedTo = window.currentUser.id; data.createdAt = Timestamp.now();
                     await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'leads'), data);
                 }
-                closeLeadModal();
-                notify("Cloud Updated");
-            } catch (e) { notify("Save Error"); }
+                closeLeadModal(); notify("Synced to Cloud");
+            } catch (e) { notify("Save Failed"); }
             setProcessing(false);
         };
 
@@ -667,7 +665,6 @@
             editingLeadId = id;
             const historyList = document.getElementById('lead-history-list');
             const historySection = document.getElementById('lead-history-section');
-
             if (id) {
                 const l = leads.find(x => x.id === id);
                 document.getElementById('lead-name').value = l.name || '';
@@ -675,17 +672,8 @@
                 document.getElementById('lead-course').value = l.course || '';
                 document.getElementById('lead-notes').value = l.notes || '';
                 document.getElementById('lead-followup').value = l.followup || '';
-                
                 historySection.classList.remove('hidden');
-                historyList.innerHTML = (l.history || []).map(h => `
-                    <div class="bg-gray-50 p-3 rounded-xl border">
-                        <div class="flex justify-between text-[8px] font-black uppercase text-gray-400 mb-1">
-                            <span>${h.user}</span>
-                            <span>${h.date}</span>
-                        </div>
-                        <p class="text-xs text-gray-700">${h.note}</p>
-                    </div>
-                `).join('') || '<p class="text-xs text-gray-300 italic">No history yet.</p>';
+                historyList.innerHTML = (l.history || []).map(h => `<div class="bg-gray-50 p-3 rounded-xl border text-[10px]"><span class="font-bold uppercase text-gray-400">${h.user} • ${h.date}</span><p class="text-gray-700 mt-1">${h.note}</p></div>`).join('');
             } else {
                 document.querySelectorAll('#lead-modal input, #lead-modal textarea').forEach(i => i.value = '');
                 historySection.classList.add('hidden');
@@ -693,87 +681,74 @@
             document.getElementById('lead-modal').classList.remove('hidden');
         };
 
-        // --- EXCEL IMPORT (DUPLICATE DETECTION & ROUND ROBIN) ---
+        window.saveEmployee = async () => {
+            const n = document.getElementById('staff-name').value.trim(), i = document.getElementById('staff-id').value.trim(), p = document.getElementById('staff-pass').value.trim();
+            if(!n || !i || !p) return notify("All fields required");
+            setProcessing(true, "Adding Member...");
+            try {
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', i), { name: n, password: p, role: 'telecaller' });
+                closeStaffModal(); notify("Welcome, " + n);
+            } catch(e) { notify("Add Failed"); }
+            setProcessing(false);
+        };
+
+        window.deleteLead = async (id) => { if (confirm("Delete Lead?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', id)); };
+        window.deleteStaff = async (id) => { if (confirm("Remove Staff?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', id)); };
+        window.deleteList = async (id) => { if(confirm("Delete List & its Leads?")){ setProcessing(true, "Clearing List..."); try { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'lead_groups', id)); const toDel = leads.filter(l => l.listId === id); for(let l of toDel) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', l.id)); } catch(e){} setProcessing(false); } };
+        window.bulkAssignList = async (listId, staffId) => { if(!staffId) return; setProcessing(true, "Moving Leads..."); try { const toAssign = leads.filter(l => l.listId === listId); for(let l of toAssign) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', l.id), { assignedTo: staffId, updatedAt: Timestamp.now() }); } catch(e){} setProcessing(false); };
+
         window.handleExcelUpload = (e) => {
             const file = e.target.files[0]; if (!file) return;
-            const listName = prompt("Import Name:", file.name.split('.')[0]); if (!listName) return;
+            const listName = prompt("Import Label:", file.name.split('.')[0]); if (!listName) return;
             const autoAssign = document.getElementById('auto-assign-toggle').checked;
-            
-            setProcessing(true, "Scanning for Duplicates...");
+            setProcessing(true, "Scanning Excel...");
             const reader = new FileReader();
             reader.onload = async (ev) => {
                 try {
                     const workbook = XLSX.read(new Uint8Array(ev.target.result), {type: 'array'});
                     const json = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 0, defval: "" });
-                    
                     const listRef = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'lead_groups'), { name: listName, createdAt: Timestamp.now() });
-                    
-                    let imported = 0, skipped = 0, staffIdx = 0;
+                    let imported = 0, staffIdx = 0;
                     for (let row of json) {
-                        const normalized = {}; Object.keys(row).forEach(k => normalized[k.trim().toLowerCase()] = row[k]);
-                        const phone = String(normalized.phone || normalized.mobile || normalized.contact || "").trim();
-                        const name = normalized.name || normalized['full name'] || "";
-
-                        // Duplicate Check
-                        if (leads.some(l => l.phone === phone)) { skipped++; continue; }
-
-                        if (phone) {
+                        const norm = {}; Object.keys(row).forEach(k => norm[k.trim().toLowerCase()] = row[k]);
+                        const phone = String(norm.phone || norm.mobile || norm.contact || "").trim();
+                        if (phone && !leads.some(l => l.phone === phone)) {
                             const assignee = autoAssign ? staff[staffIdx % staff.length].id : window.currentUser.id;
-                            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'leads'), { 
-                                name, phone, status: 'new', assignedTo: assignee, listId: listRef.id, 
-                                updatedAt: Timestamp.now(), createdAt: Timestamp.now() 
-                            });
-                            imported++;
-                            if(autoAssign) staffIdx++;
+                            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'leads'), { name: norm.name || norm['full name'] || "", phone, status: 'new', assignedTo: assignee, listId: listRef.id, updatedAt: Timestamp.now(), createdAt: Timestamp.now() });
+                            imported++; if(autoAssign) staffIdx++;
                         }
                     }
-                    notify(`Imported: ${imported} | Skipped: ${skipped}`);
-                    showView('lists');
-                } catch (err) { notify("Import Failed"); }
+                    notify(`Imported ${imported} Leads`); showView('lists');
+                } catch (err) { notify("Import Error"); }
                 setProcessing(false);
             };
             reader.readAsArrayBuffer(file);
         };
 
-        // --- HELPERS ---
-        function setProcessing(v, text) { isProcessing = v; document.getElementById('processing-text').innerText = text || "Syncing..."; document.getElementById('processing-overlay').classList.toggle('hidden', !v); if(!v) renderLeads(); }
-        function notify(m) { const t = document.getElementById('toast'); document.getElementById('toast-msg').innerText = m; t.classList.remove('translate-y-20', 'opacity-0'); setTimeout(() => t.classList.add('translate-y-20', 'opacity-0'), 3000); }
+        // UI HELPERS
         function getStatusStyle(s) { switch(s) { case 'new': return 'bg-blue-100 text-blue-700'; case 'follow-up': return 'bg-orange-100 text-orange-700'; case 'converted': return 'bg-green-100 text-green-700'; case 'rejected': return 'bg-red-100 text-red-700'; default: return 'bg-gray-100'; } }
         function updateStats() { const f = window.currentUser.role === 'admin' ? leads : leads.filter(l => l.assignedTo === window.currentUser.id); document.getElementById('stat-total').innerText = f.length; document.getElementById('stat-converted').innerText = f.filter(x => x.status === 'converted').length; document.getElementById('stat-pending').innerText = f.filter(x => x.status === 'new' || x.status === 'follow-up').length; document.getElementById('stat-rejected').innerText = f.filter(x => x.status === 'rejected').length; }
         function updateChart() { const canvas = document.getElementById('analyticsChart'); if (!canvas) return; const counts = ['new', 'follow-up', 'converted', 'rejected'].map(s => leads.filter(x => x.status === s).length); if (myChart) myChart.destroy(); myChart = new Chart(canvas.getContext('2d'), { type: 'bar', data: { labels: ['New', 'Follow', 'Conv', 'Rej'], datasets: [{ data: counts, backgroundColor: ['#3b82f6', '#f97316', '#10b981', '#ef4444'], borderRadius: 12 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false } } } } }); }
         
-        // Window Exports for dynamic HTML
-        window.debouncedRenderLeads = () => { if(renderTimeout) clearTimeout(renderTimeout); renderTimeout = setTimeout(renderLeads, 200); };
-        window.loadMoreLeads = () => { renderLimit += 50; renderLeads(); };
-        window.copyToClipboard = (t) => { const el = document.createElement('textarea'); el.value = t; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); notify("Copied!"); };
         window.closeLeadModal = () => document.getElementById('lead-modal').classList.add('hidden');
         window.closeStaffModal = () => document.getElementById('staff-modal').classList.add('hidden');
         window.openStaffModal = () => document.getElementById('staff-modal').classList.remove('hidden');
-        window.updateStatus = async (id, status) => { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', id), { status, updatedAt: Timestamp.now() }); notify("Updated"); };
+        window.updateStatus = async (id, status) => { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', id), { status, updatedAt: Timestamp.now() }); };
+        window.copyToClipboard = (t) => { const el = document.createElement('textarea'); el.value = t; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); notify("Copied!"); };
+        window.toggleMobileMenu = (f) => { const s = document.getElementById('sidebar'); const target = f !== undefined ? f : !s.classList.contains('translate-x-0'); s.classList.toggle('translate-x-0', target); s.classList.toggle('-translate-x-full', !target); };
         window.getAIPitch = async (id) => {
-            const l = leads.find(x => x.id === id);
-            const modal = document.getElementById('ai-modal');
-            const content = document.getElementById('ai-content');
-            modal.classList.remove('hidden');
-            content.innerHTML = '<div class="loader"></div>';
+            const l = leads.find(x => x.id === id); const modal = document.getElementById('ai-modal'); const content = document.getElementById('ai-content');
+            modal.classList.remove('hidden'); content.innerHTML = '<div class="loader"></div>';
             try {
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: `Generate a 2-sentence call script for lead ${l.name} interested in ${l.course || 'courses'}. Context: ${l.notes || 'Inquiry'}` }] }] })
+                    body: JSON.stringify({ contents: [{ parts: [{ text: `Lead: ${l.name}. Course: ${l.course}. Context: ${l.notes}. Create a 2-sentence call script.` }] }] })
                 });
-                const res = await response.json();
-                content.innerText = res.candidates?.[0]?.content?.parts?.[0]?.text || "AI Busy. Try later.";
+                const res = await response.json(); content.innerText = res.candidates?.[0]?.content?.parts?.[0]?.text || "AI Error.";
             } catch(e) { content.innerText = "Check Connection."; }
-        };
-        window.saveEmployee = async () => {
-            const n = document.getElementById('staff-name').value, i = document.getElementById('staff-id').value, p = document.getElementById('staff-pass').value;
-            if(!n || !i || !p) return;
-            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', i), { name: n, password: p, role: 'telecaller' });
-            closeStaffModal(); notify("Staff Created");
         };
 
         initAuth();
-        let renderTimeout = null;
     </script>
 </body>
 </html>
