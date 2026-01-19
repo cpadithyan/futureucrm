@@ -48,7 +48,6 @@
         /* Checkbox styling */
         input[type="checkbox"]:checked { background-color: #3b82f6; border-color: #3b82f6; }
 
-        /* Ensure smooth rendering of lists */
         .list-transition { transition: opacity 0.3s ease-in-out; }
     </style>
 </head>
@@ -307,17 +306,29 @@
             </div>
             <div class="flex-1 overflow-y-auto p-6 space-y-6 scroll-container">
                 <div class="space-y-4">
-                    <input type="text" id="lead-name" placeholder="Candidate Name" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border text-base">
-                    <input type="tel" id="lead-phone" placeholder="Phone Number" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border text-base">
-                    <input type="text" id="lead-course" placeholder="Interested Course" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border text-base">
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase ml-2 mb-1 block">Candidate Name</label>
+                        <input type="text" id="lead-name" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border text-base">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase ml-2 mb-1 block">Contact Number</label>
+                        <input type="tel" id="lead-phone" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border text-base">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase ml-2 mb-1 block">Course Interest</label>
+                        <input type="text" id="lead-course" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border text-base">
+                    </div>
                     <div>
                         <label class="text-[10px] font-bold text-gray-400 uppercase ml-2 mb-1 block">Scheduled Follow-up</label>
                         <input type="date" id="lead-followup" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border text-base">
                     </div>
-                    <textarea id="lead-notes" rows="2" placeholder="Conversation notes..." class="w-full p-4 bg-gray-50 rounded-2xl outline-none border text-base"></textarea>
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase ml-2 mb-1 block">Current Status Note</label>
+                        <textarea id="lead-notes" rows="2" placeholder="Add latest updates..." class="w-full p-4 bg-gray-50 rounded-2xl outline-none border text-base"></textarea>
+                    </div>
                 </div>
                 <div id="lead-history-section" class="hidden space-y-4 border-t pt-6">
-                    <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Timeline</h4>
+                    <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Lead Timeline</h4>
                     <div id="lead-history-list" class="space-y-3"></div>
                 </div>
             </div>
@@ -438,31 +449,27 @@
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'leads'), (snap) => {
                 leads = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                 refreshUI();
-            }, (err) => console.error("Leads Sync Error"));
+            });
 
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'users'), (snap) => {
                 staff = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                 refreshUI();
-            }, (err) => console.error("Staff Sync Error"));
+            });
 
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'lead_groups'), (snap) => {
                 leadLists = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                 refreshUI();
-            }, (err) => console.error("Lists Sync Error"));
+            });
 
             showView('dashboard');
         }
 
         function refreshUI() {
             if (isProcessing) return;
-            
-            // Always update global stats/charts
             updateStats();
             updateChart();
             updateLeaderboard();
             updateListFilters();
-
-            // Refresh specific components based on visible view
             debouncedRenderLeads();
             renderLists();
             renderStaff();
@@ -487,7 +494,6 @@
             const mBtn = document.getElementById('m-btn-' + name);
             if(mBtn) mBtn.classList.add('bottom-nav-active');
 
-            // Force refresh on view change
             refreshUI();
         };
 
@@ -501,14 +507,14 @@
             }).sort((a,b) => b.count - a.count);
 
             container.innerHTML = stats.map((s, idx) => `
-                <div class="flex justify-between items-center bg-white/5 p-4 rounded-2xl border border-white/5 shadow-sm">
+                <div class="flex justify-between items-center bg-white/5 p-4 rounded-2xl border border-white/5 shadow-sm active:bg-white/10 transition">
                     <div class="flex items-center gap-3">
                         <span class="font-black text-gray-600 text-lg">${idx+1}</span>
                         <span class="font-bold text-gray-200">${s.name}</span>
                     </div>
                     <span class="text-xs bg-green-500 text-white px-4 py-1.5 rounded-full font-black shadow-sm">${s.count} ADM</span>
                 </div>
-            `).join('') || '<p class="text-gray-500 text-center py-10 italic">No closers yet.</p>';
+            `).join('') || '<p class="text-gray-500 text-center py-10 italic text-xs uppercase tracking-widest font-bold">No closures yet.</p>';
         }
 
         // --- LISTS & STAFF PORTAL ---
@@ -525,18 +531,18 @@
                 const listLeads = leads.filter(l => l.listId === list.id);
                 const assignedTelecallerId = listLeads.length > 0 ? listLeads[0].assignedTo : '';
                 return `
-                    <div class="bg-white p-6 rounded-3xl border shadow-sm space-y-4 fade-in cursor-default app-card">
+                    <div class="bg-white p-6 rounded-3xl border shadow-sm space-y-4 fade-in app-card">
                         <div class="flex justify-between items-start">
-                            <div class="flex-1">
-                                <h4 class="font-bold text-lg cursor-pointer hover:text-blue-600 active:text-blue-700" onclick="window.renameList('${list.id}')">${list.name}</h4>
-                                <p class="text-xs text-gray-400 uppercase font-bold tracking-widest">${listLeads.length} leads in list</p>
+                            <div class="flex-1" onclick="window.renameList('${list.id}')">
+                                <h4 class="font-bold text-lg text-blue-600">${list.name}</h4>
+                                <p class="text-xs text-gray-400 uppercase font-black tracking-tighter">${listLeads.length} Total Leads</p>
                             </div>
                             <button onclick="window.deleteList('${list.id}')" class="text-red-300 hover:text-red-500 p-2 active:scale-95 transition"><i class="fas fa-trash-alt"></i></button>
                         </div>
                         <div class="space-y-2 border-t pt-4">
-                            <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Assigned Telecaller</label>
+                            <label class="text-[10px] font-black text-gray-400 uppercase ml-1">Team Ownership</label>
                             <select onchange="window.bulkAssignList('${list.id}', this.value)" class="w-full p-4 bg-gray-50 rounded-2xl text-sm border-none outline-none font-bold cursor-pointer focus:ring-2 ring-blue-100">
-                                <option value="">Assign Entire List...</option>
+                                <option value="">Assign To...</option>
                                 ${staff.map(s => `<option value="${s.id}" ${assignedTelecallerId === s.id ? 'selected' : ''}>${s.name}</option>`).join('')}
                             </select>
                         </div>
@@ -566,11 +572,11 @@
                     <p class="text-xs text-gray-400 font-mono mt-1 tracking-widest uppercase">ID: ${s.id}</p>
                     <div class="grid grid-cols-2 gap-2 mt-6 pt-4 border-t">
                         <div class="bg-gray-50 p-3 rounded-2xl text-center">
-                            <p class="text-[9px] font-black text-gray-400 uppercase">Leads</p>
+                            <p class="text-[9px] font-black text-gray-400 uppercase tracking-tighter">Bucket</p>
                             <p class="text-lg font-black text-gray-700">${staffLeads.length}</p>
                         </div>
                         <div class="bg-green-50 p-3 rounded-2xl text-center">
-                            <p class="text-[9px] font-black text-green-400 uppercase">Closed</p>
+                            <p class="text-[9px] font-black text-green-400 uppercase tracking-tighter">Converted</p>
                             <p class="text-lg font-black text-green-700">${conversions}</p>
                         </div>
                     </div>
@@ -621,12 +627,12 @@
                 const isDue = l.followup && l.followup <= today && l.status !== 'converted' && l.status !== 'rejected';
                 const listName = leadLists.find(gl => gl.id === l.listId)?.name || 'Manual Entry';
                 return `
-                <div class="bg-white p-5 app-card border shadow-sm space-y-4 fade-in ${isDue ? 'border-orange-200 bg-orange-50/20' : ''} cursor-default">
+                <div class="bg-white p-5 app-card border shadow-sm space-y-4 fade-in ${isDue ? 'border-orange-200 bg-orange-50/20' : ''}">
                     <div class="flex justify-between items-start">
-                        <div class="flex items-start gap-3 flex-1 overflow-hidden">
+                        <div class="flex items-start gap-3 flex-1 overflow-hidden" onclick="window.openLeadModal('${l.id}')">
                             ${selectMode ? `<input type="checkbox" onchange="window.toggleLeadSelection('${l.id}')" ${selectedLeads.has(l.id) ? 'checked' : ''} class="w-6 h-6 mt-1 cursor-pointer">` : ''}
                             <div class="flex-1 truncate">
-                                <h3 class="text-lg font-black truncate flex items-center gap-2 cursor-pointer active:text-blue-600" onclick="window.inlineEdit('${l.id}', 'name')">
+                                <h3 class="text-lg font-black truncate flex items-center gap-2 active:text-blue-600 transition">
                                     ${l.name || '<span class="text-gray-300 font-normal">New Candidate</span>'}
                                     ${isDue ? '<span class="w-2.5 h-2.5 bg-orange-500 rounded-full animate-pulse shadow-sm"></span>' : ''}
                                 </h3>
@@ -638,7 +644,7 @@
                             </div>
                         </div>
                         <div class="flex flex-col items-end gap-2">
-                             <button onclick="window.getAIPitch('${l.id}')" class="text-blue-500 bg-blue-50 w-9 h-9 rounded-full flex items-center justify-center hover:bg-blue-100 active:scale-90 transition shadow-sm border border-blue-100"><i class="fas fa-magic text-xs"></i></button>
+                             <button onclick="window.getAIPitch('${l.id}')" class="text-blue-500 bg-blue-50 w-10 h-10 rounded-full flex items-center justify-center hover:bg-blue-100 active:scale-90 transition shadow-sm border border-blue-100"><i class="fas fa-magic text-sm"></i></button>
                             <select onchange="window.updateStatus('${l.id}', this.value)" class="text-[10px] font-black px-3 py-2 rounded-xl border-none outline-none cursor-pointer ${getStatusStyle(l.status)} active:scale-95 shadow-sm">
                                 <option value="new" ${l.status === 'new' ? 'selected' : ''}>NEW</option>
                                 <option value="follow-up" ${l.status === 'follow-up' ? 'selected' : ''}>FOLLOW-UP</option>
@@ -651,14 +657,14 @@
                         <a href="tel:${l.phone}" class="col-span-2 bg-blue-600 text-white h-14 rounded-2xl flex items-center justify-center gap-2 font-black shadow-lg active:scale-95 transition">
                             <i class="fas fa-phone-alt"></i> CALL
                         </a>
-                        <button onclick="window.openWA('${l.id}')" class="bg-green-100 text-green-600 rounded-2xl flex items-center justify-center active:scale-95 transition text-xl"><i class="fab fa-whatsapp"></i></button>
+                        <button onclick="window.openWA('${l.id}')" class="bg-green-100 text-green-600 rounded-2xl flex items-center justify-center active:scale-95 transition text-2xl"><i class="fab fa-whatsapp"></i></button>
                         <button onclick="window.shareLead('${l.id}')" class="bg-gray-100 text-gray-500 rounded-2xl flex items-center justify-center active:scale-95 transition text-lg"><i class="fas fa-share-alt"></i></button>
                     </div>
                     <div class="flex justify-between items-center border-t pt-3">
                          <span class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">ACT: ${l.updatedAt?.toDate().toLocaleDateString() || '--'}</span>
                          <div class="flex gap-4">
-                            <button onclick="window.openLeadModal('${l.id}')" class="text-blue-500 font-bold text-[10px] uppercase tracking-tighter active:opacity-50">Profile</button>
-                            ${window.currentUser.role === 'admin' ? `<button onclick="window.deleteLead('${l.id}')" class="text-red-300 font-bold text-[10px] uppercase active:opacity-50">Del</button>` : ''}
+                            <button onclick="window.openLeadModal('${l.id}')" class="text-blue-500 font-black text-[10px] uppercase tracking-tighter active:opacity-50">Profile / Edit</button>
+                            ${window.currentUser.role === 'admin' ? `<button onclick="window.deleteLead('${l.id}')" class="text-red-300 font-black text-[10px] uppercase active:opacity-50">Delete</button>` : ''}
                          </div>
                     </div>
                 </div>
@@ -679,7 +685,7 @@
             if (!l) return;
             let p = l.phone.replace(/\D/g, '');
             if (p.length === 10) p = '91' + p; 
-            window.open(`https://wa.me/${p}?text=${encodeURIComponent('Hello ' + (l.name || 'Candidate') + ', this is FutureU Institute. Are you still interested in our professional programs?')}`, '_blank');
+            window.open(`https://wa.me/${p}?text=${encodeURIComponent('Hello ' + (l.name || 'Candidate') + ', this is FutureU Institute. Are you still interested in our program?')}`, '_blank');
         };
 
         window.saveLead = async () => {
@@ -689,7 +695,7 @@
             const nt = document.getElementById('lead-notes').value.trim();
             const f = document.getElementById('lead-followup').value;
             
-            if (!n || !p) return notify("Missing Critical Info");
+            if (!n || !p) return notify("Name & Number Required");
             
             setProcessing(true, "Cloud Syncing...");
             try {
@@ -707,14 +713,36 @@
             setProcessing(false);
         };
 
-        window.inlineEdit = async (id, field) => {
-            const l = leads.find(x => x.id === id); if(!l) return;
-            const val = prompt(`Update ${field.toUpperCase()}:`, l[field] || '');
-            if (val !== null && val !== l[field]) {
-                setProcessing(true, "Patching Cloud...");
-                try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', id), { [field]: val, updatedAt: Timestamp.now() }); notify("Patched"); } catch(e){}
-                setProcessing(false);
+        window.openLeadModal = (id = null) => {
+            editingLeadId = id;
+            const historyList = document.getElementById('lead-history-list');
+            const historySection = document.getElementById('lead-history-section');
+            if (id) {
+                const l = leads.find(x => x.id === id);
+                if(!l) return;
+                document.getElementById('lead-name').value = l.name || '';
+                document.getElementById('lead-phone').value = l.phone || '';
+                document.getElementById('lead-course').value = l.course || '';
+                document.getElementById('lead-notes').value = l.notes || '';
+                document.getElementById('lead-followup').value = l.followup || '';
+                historySection.classList.remove('hidden');
+                historyList.innerHTML = (l.history || []).map(h => `<div class="bg-gray-50 p-3 rounded-xl border text-[10px]"><span class="font-bold uppercase text-gray-400">${h.user} • ${h.date}</span><p class="text-gray-700 mt-1">${h.note}</p></div>`).join('');
+            } else {
+                document.querySelectorAll('#lead-modal input, #lead-modal textarea').forEach(i => i.value = '');
+                historySection.classList.add('hidden');
             }
+            document.getElementById('lead-modal').classList.remove('hidden');
+        };
+
+        window.saveEmployee = async () => {
+            const n = document.getElementById('staff-name').value.trim(), i = document.getElementById('staff-id').value.trim(), p = document.getElementById('staff-pass').value.trim();
+            if(!n || !i || !p) return notify("All fields required");
+            setProcessing(true, "Adding Member...");
+            try {
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', i), { name: n, password: p, role: 'telecaller' });
+                closeStaffModal(); notify("Welcome, " + n);
+            } catch(e) { notify("Add Failed"); }
+            setProcessing(false);
         };
 
         window.deleteLead = async (id) => { if (confirm("Remove Lead?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', id)); };
@@ -740,7 +768,7 @@
                         if (ph && !leads.some(l => l.phone === ph)) {
                             const ass = auto && staff.length > 0 ? staff[staffIdx % staff.length].id : window.currentUser.id;
                             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'leads'), { name: n.name || n['full name'] || "", phone: ph, status: 'new', assignedTo: ass, listId: listRef.id, updatedAt: Timestamp.now(), createdAt: Timestamp.now() });
-                            imp++; if(auto) staffIdx++;
+                            imp++; if(auto && staff.length > 0) staffIdx++;
                         }
                     }
                     notify(`Imported ${imp} Leads`); showView('lists');
@@ -750,7 +778,11 @@
             reader.readAsArrayBuffer(f);
         };
 
-        // --- MODALS & UI ---
+        // UI HELPERS
+        function getStatusStyle(s) { switch(s) { case 'new': return 'bg-blue-100 text-blue-700'; case 'follow-up': return 'bg-orange-100 text-orange-700'; case 'converted': return 'bg-green-100 text-green-700'; case 'rejected': return 'bg-red-100 text-red-700'; default: return 'bg-gray-100 text-gray-500'; } }
+        function updateStats() { const f = window.currentUser.role === 'admin' ? leads : leads.filter(l => l.assignedTo === window.currentUser.id); const today = new Date().toISOString().split('T')[0]; document.getElementById('stat-total').innerText = f.length; document.getElementById('stat-converted').innerText = f.filter(x => x.status === 'converted').length; document.getElementById('stat-pending').innerText = f.filter(x => x.followup && x.followup <= today && x.status !== 'converted' && x.status !== 'rejected').length; document.getElementById('stat-rejected').innerText = f.filter(x => x.status === 'rejected').length; }
+        function updateChart() { const canvas = document.getElementById('analyticsChart'); if (!canvas) return; const counts = ['new', 'follow-up', 'converted', 'rejected'].map(s => leads.filter(x => x.status === s).length); if (myChart) myChart.destroy(); myChart = new Chart(canvas.getContext('2d'), { type: 'bar', data: { labels: ['New', 'Follow', 'Conv', 'Rej'], datasets: [{ data: counts, backgroundColor: ['#3b82f6', '#f97316', '#10b981', '#ef4444'], borderRadius: 12 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false } } } } }); }
+        
         window.closeLeadModal = () => document.getElementById('lead-modal').classList.add('hidden');
         window.closeStaffModal = () => document.getElementById('staff-modal').classList.add('hidden');
         window.openStaffModal = () => { document.getElementById('staff-name').value=''; document.getElementById('staff-id').value=''; document.getElementById('staff-pass').value=''; document.getElementById('staff-modal').classList.remove('hidden'); };
@@ -764,14 +796,19 @@
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ contents: [{ parts: [{ text: `Lead: ${l.name}. Course: ${l.course || 'FutureU Program'}. Notes: ${l.notes}. Write 2-sentence call script.` }] }] })
                 });
-                const res = await response.json(); content.innerText = res.candidates?.[0]?.content?.parts?.[0]?.text || "AI Busy.";
-            } catch(e) { content.innerText = "Connection Error."; }
+                const res = await response.json(); content.innerText = res.candidates?.[0]?.content?.parts?.[0]?.text || "AI Error.";
+            } catch(e) { content.innerText = "Check Connection."; }
         };
 
-        function getStatusStyle(s) { switch(s) { case 'new': return 'bg-blue-100 text-blue-700'; case 'follow-up': return 'bg-orange-100 text-orange-700'; case 'converted': return 'bg-green-100 text-green-700'; case 'rejected': return 'bg-red-100 text-red-700'; default: return 'bg-gray-100 text-gray-500'; } }
-        function updateStats() { const f = window.currentUser.role === 'admin' ? leads : leads.filter(l => l.assignedTo === window.currentUser.id); const today = new Date().toISOString().split('T')[0]; document.getElementById('stat-total').innerText = f.length; document.getElementById('stat-converted').innerText = f.filter(x => x.status === 'converted').length; document.getElementById('stat-pending').innerText = f.filter(x => x.followup && x.followup <= today && x.status !== 'converted' && x.status !== 'rejected').length; document.getElementById('stat-rejected').innerText = f.filter(x => x.status === 'rejected').length; }
-        function updateChart() { const canvas = document.getElementById('analyticsChart'); if (!canvas) return; const counts = ['new', 'follow-up', 'converted', 'rejected'].map(s => leads.filter(x => x.status === s).length); if (myChart) myChart.destroy(); myChart = new Chart(canvas.getContext('2d'), { type: 'bar', data: { labels: ['New', 'Follow', 'Conv', 'Rej'], datasets: [{ data: counts, backgroundColor: ['#3b82f6', '#f97316', '#10b981', '#ef4444'], borderRadius: 12 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false } } } } }); }
-        
+        window.renameList = async (id) => {
+            const list = leadLists.find(l => l.id === id); if (!list) return;
+            const newName = prompt("Rename list:", list.name);
+            if(newName && newName !== list.name) {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'lead_groups', id), { name: newName });
+                notify("Renamed");
+            }
+        };
+
         initAuth();
     </script>
 </body>
