@@ -152,7 +152,7 @@
                         <div class="bg-gray-900 p-6 rounded-[2rem] text-white flex flex-col min-h-[300px]">
                             <h4 class="font-bold mb-4 flex items-center gap-2 text-yellow-400"><i class="fas fa-crown"></i> Team Rankings</h4>
                             <div id="leaderboard" class="space-y-4 overflow-y-auto flex-1 text-sm scroll-container">
-                                <p class="text-gray-500 text-center py-10 italic font-bold text-xs uppercase tracking-widest">Updating cloud stats...</p>
+                                <p class="text-gray-500 text-center py-10 italic font-bold text-xs uppercase tracking-widest">Syncing leaderboard...</p>
                             </div>
                         </div>
                     </div>
@@ -226,10 +226,12 @@
                         </button>
                         <input type="file" id="excel-input" class="hidden" accept=".xlsx,.xls,.csv" onchange="handleExcelUpload(event)">
                     </div>
-                    <div id="lists-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 min-h-[100px]"></div>
+                    <div id="lists-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 min-h-[100px]">
+                        <div class="col-span-full py-10 text-center"><div class="loader mx-auto"></div></div>
+                    </div>
                 </section>
 
-                <!-- Staff View -->
+                <!-- Team Portal View -->
                 <section id="view-staff" class="view hidden space-y-6 fade-in">
                     <div class="flex justify-between items-center">
                         <h1 class="text-2xl font-bold">Team Portal</h1>
@@ -237,7 +239,9 @@
                             <i class="fas fa-user-plus"></i> Add Employee
                         </button>
                     </div>
-                    <div id="staff-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 min-h-[100px]"></div>
+                    <div id="staff-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 min-h-[100px]">
+                        <div class="col-span-full py-10 text-center"><div class="loader mx-auto"></div></div>
+                    </div>
                 </section>
 
             </div>
@@ -247,7 +251,7 @@
         <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around p-4 z-50 shadow-2xl">
             <button onclick="showView('dashboard')" class="bottom-nav-btn flex-1 flex flex-col items-center gap-1 text-gray-400 active:bg-gray-50 rounded-xl py-2" id="m-btn-dashboard">
                 <i class="fas fa-th-large text-xl"></i>
-                <span class="text-[10px] font-bold uppercase tracking-tighter">Stats</span>
+                <span class="text-[10px] font-bold uppercase tracking-tighter">Dashboard</span>
             </button>
             <button onclick="showView('leads')" class="bottom-nav-btn flex-1 flex flex-col items-center gap-1 text-gray-400 active:bg-gray-50 rounded-xl py-2" id="m-btn-leads">
                 <i class="fas fa-headset text-xl"></i>
@@ -271,7 +275,7 @@
                 <h3 class="text-xl font-bold text-blue-600 flex items-center gap-2"><i class="fas fa-magic"></i> FutureU AI Pitch</h3>
                 <button onclick="document.getElementById('ai-modal').classList.add('hidden')" class="text-gray-400 p-2 active:scale-95 transition"><i class="fas fa-times text-lg"></i></button>
             </div>
-            <div id="ai-content" class="bg-blue-50 p-6 rounded-2xl text-blue-900 leading-relaxed italic border border-blue-100 min-h-[100px] flex items-center justify-center text-sm"></div>
+            <div id="ai-content" class="bg-blue-50 p-6 rounded-2xl text-blue-900 leading-relaxed italic border border-blue-100 min-h-[100px] flex items-center justify-center text-sm text-center"></div>
             <button onclick="copyToClipboard(document.getElementById('ai-content').innerText)" class="w-full py-5 bg-blue-600 text-white rounded-2xl font-bold shadow-lg active:scale-95 transition">Copy script</button>
         </div>
     </div>
@@ -288,7 +292,7 @@
                     <div><label class="text-[10px] font-bold text-gray-400 uppercase ml-2 mb-1 block tracking-widest">Candidate Name</label><input type="text" id="lead-name" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border text-base"></div>
                     <div><label class="text-[10px] font-bold text-gray-400 uppercase ml-2 mb-1 block tracking-widest">Phone</label><input type="tel" id="lead-phone" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border text-base"></div>
                     <div><label class="text-[10px] font-bold text-gray-400 uppercase ml-2 mb-1 block tracking-widest">Follow-up Date</label><input type="date" id="lead-followup" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border text-base"></div>
-                    <div><label class="text-[10px] font-bold text-gray-400 uppercase ml-2 mb-1 block tracking-widest">Interaction Notes</label><textarea id="lead-notes" rows="4" placeholder="Update student interest..." class="w-full p-4 bg-gray-50 rounded-2xl outline-none border text-base"></textarea></div>
+                    <div><label class="text-[10px] font-bold text-gray-400 uppercase ml-2 mb-1 block tracking-widest">Current Notes</label><textarea id="lead-notes" rows="4" placeholder="Update candidate response..." class="w-full p-4 bg-gray-50 rounded-2xl outline-none border text-base"></textarea></div>
                 </div>
                 <div id="lead-history-section" class="hidden space-y-4 border-t pt-6">
                     <h4 class="text-xs font-black text-gray-400 uppercase tracking-widest">Activity Timeline</h4>
@@ -302,7 +306,7 @@
     <!-- Staff Modal -->
     <div id="staff-modal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 modal-bg">
         <div class="bg-white rounded-[2rem] w-full max-w-md shadow-2xl p-8 space-y-6">
-            <h3 class="text-xl font-bold text-center">New Team Member</h3>
+            <h3 class="text-xl font-bold text-center">Add Team Member</h3>
             <div class="space-y-4">
                 <input type="text" id="staff-name" placeholder="Full Name" class="w-full p-4 bg-gray-50 rounded-2xl border outline-none text-base">
                 <input type="text" id="staff-id" placeholder="Login ID" class="w-full p-4 bg-gray-50 rounded-2xl border outline-none text-base">
@@ -313,11 +317,6 @@
                 <button onclick="saveEmployee()" class="flex-1 py-4 bg-black text-white rounded-2xl font-bold active:scale-95 transition">Create</button>
             </div>
         </div>
-    </div>
-
-    <!-- Toast -->
-    <div id="toast" class="fixed bottom-24 md:bottom-8 left-1/2 -translate-x-1/2 md:left-auto md:right-8 md:translate-x-0 translate-y-20 opacity-0 transition-all duration-300 bg-gray-900 text-white px-6 py-4 rounded-2xl shadow-2xl z-[150]">
-        <span id="toast-msg">Success</span>
     </div>
 
     <script type="module">
@@ -352,7 +351,7 @@
         let selectedLeads = new Set();
         let renderLimit = 50;
         let renderTimeout = null;
-        let initialSyncDone = false;
+        let initialSyncCount = 0;
 
         // --- AUTH ---
         const initAuth = async () => {
@@ -388,9 +387,9 @@
                 if (userSnap.exists() && userSnap.data().password === pass) {
                     proceedLogin({ id, name: userSnap.data().name, role: 'telecaller' });
                 } else {
-                    notify("Incorrect ID or Password", "error");
+                    notify("Invalid ID or Password", "error");
                 }
-            } catch (err) { notify("Connection Error"); }
+            } catch (err) { notify("Sync Connection Error"); }
         };
 
         function proceedLogin(userData) {
@@ -401,7 +400,7 @@
 
         window.logout = () => { localStorage.removeItem('crm_session_v3'); location.reload(); };
 
-        // --- APP SYNC ---
+        // --- CLOUD SYNC ENGINE ---
         function setupApp() {
             if (!user) return;
             document.getElementById('auth-overlay').classList.add('hidden');
@@ -412,28 +411,28 @@
 
             if (window.currentUser.role !== 'admin') document.querySelectorAll('.admin-only').forEach(e => e.remove());
             
-            // Unified Real-time synchronization
+            // Centralized Snapshot Listeners
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'leads'), (snap) => {
                 leads = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                initialSyncDone = true;
+                initialSyncCount++;
                 refreshUI();
-            }, (err) => console.error("Leads Sync Error"));
+            });
 
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'users'), (snap) => {
                 staff = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                 refreshUI();
-            }, (err) => console.error("Staff Sync Error"));
+            });
 
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'lead_groups'), (snap) => {
                 leadLists = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                 refreshUI();
-            }, (err) => console.error("Lists Sync Error"));
+            });
 
             showView('dashboard');
         }
 
         function refreshUI() {
-            // NEVER block UI updates with isProcessing anymore
+            // Logic targets visible components without blocking data flow
             updateStats();
             updateChart();
             updateLeaderboard();
@@ -448,12 +447,8 @@
             views.forEach(v => v.classList.add('hidden'));
             
             const targetView = document.getElementById('view-' + name);
-            if (targetView) {
-                targetView.classList.remove('hidden');
-                targetView.classList.add('fade-in');
-            }
+            if (targetView) targetView.classList.remove('hidden');
             
-            // UI States
             document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('sidebar-active'));
             const dBtn = document.getElementById('btn-' + name);
             if (dBtn) dBtn.classList.add('sidebar-active');
@@ -474,13 +469,13 @@
                     status: status, 
                     updatedAt: Timestamp.now() 
                 });
-            } catch (err) { notify("Sync Failed", "error"); }
+            } catch (err) { notify("Cloud Update Failed", "error"); }
         };
 
         window.shareLead = async (id) => {
             const l = leads.find(x => x.id === id);
             if (!l) return;
-            const text = `FutureU CRM Info:\nName: ${l.name}\nPhone: ${l.phone}\nStatus: ${l.status.toUpperCase()}\nNotes: ${l.notes || 'No notes'}`;
+            const text = `FutureU Info:\nName: ${l.name}\nPhone: ${l.phone}\nStatus: ${l.status.toUpperCase()}\nNotes: ${l.notes || 'N/A'}`;
             
             if (navigator.share) {
                 try {
@@ -508,7 +503,7 @@
             
             try {
                 const data = { name: n, phone: p, followup: f, notes: nt, updatedAt: Timestamp.now() };
-                const hist = { date: new Date().toLocaleString(), user: window.currentUser.name, note: nt || "Profile Synced" };
+                const hist = { date: new Date().toLocaleString(), user: window.currentUser.name, note: nt || "Profile Updated" };
 
                 if (editingLeadId) {
                     await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', editingLeadId), { ...data, history: arrayUnion(hist) });
@@ -521,7 +516,7 @@
             } catch (e) { notify("Sync Failed"); }
         };
 
-        // --- UI RENDERING ---
+        // --- RENDERING ---
         window.renderLeads = () => {
             const container = document.getElementById('leads-container');
             if (!container) return;
@@ -544,34 +539,34 @@
             const displaySubset = filtered.slice(0, renderLimit);
             const today = new Date().toISOString().split('T')[0];
 
-            if (displaySubset.length === 0 && initialSyncDone) {
+            if (displaySubset.length === 0 && initialSyncCount > 0) {
                 container.innerHTML = '<div class="py-20 text-center text-gray-400 italic">No candidates found.</div>';
                 return;
             }
 
             container.innerHTML = displaySubset.map(l => {
                 const isDue = l.followup && l.followup <= today && l.status !== 'converted' && l.status !== 'rejected';
-                const listName = leadLists.find(gl => gl.id === l.listId)?.name || 'Manual';
+                const listName = leadLists.find(gl => gl.id === l.listId)?.name || 'Manual Entry';
                 return `
                 <div class="bg-white p-5 app-card border shadow-sm space-y-4 fade-in ${isDue ? 'border-orange-200 bg-orange-50/20' : ''}">
                     <div class="flex justify-between items-start">
                         <div class="flex items-start gap-3 flex-1 overflow-hidden" onclick="window.openLeadModal('${l.id}')">
-                            ${selectMode ? `<input type="checkbox" onchange="window.toggleLeadSelection('${l.id}')" ${selectedLeads.has(l.id) ? 'checked' : ''} class="w-6 h-6 mt-1 cursor-pointer">` : ''}
+                            ${selectMode ? `<input type="checkbox" onchange="window.toggleLeadSelection('${l.id}')" ${selectedLeads.has(l.id) ? 'checked' : ''} class="w-6 h-6 mt-1">` : ''}
                             <div class="flex-1 truncate">
-                                <h3 class="text-lg font-black truncate flex items-center gap-2 active:text-blue-600 transition">
+                                <h3 class="text-lg font-black truncate active:text-blue-600 transition flex items-center gap-2">
                                     ${l.name || '<span class="font-normal italic">New Candidate</span>'}
-                                    ${isDue ? '<span class="w-2.5 h-2.5 bg-orange-500 rounded-full animate-pulse"></span>' : ''}
+                                    ${isDue ? '<span class="w-2 h-2 bg-orange-500 rounded-full animate-ping"></span>' : ''}
                                 </h3>
-                                <p class="text-sm font-mono text-gray-500 mt-0.5 tracking-tight">${l.phone}</p>
+                                <p class="text-sm font-mono text-gray-500 mt-0.5">${l.phone}</p>
                                 <div class="flex flex-wrap gap-1 mt-2">
                                     <span class="text-[8px] bg-blue-100 text-blue-600 px-2 py-0.5 rounded font-black uppercase tracking-wider">${listName}</span>
-                                    ${l.followup ? `<span class="text-[8px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded font-black uppercase">📅 ${l.followup}</span>` : ''}
+                                    ${l.followup ? `<span class="text-[8px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded font-bold uppercase tracking-wider">📅 ${l.followup}</span>` : ''}
                                 </div>
                             </div>
                         </div>
                         <div class="flex flex-col items-end gap-2">
-                             <button onclick="window.getAIPitch('${l.id}')" class="text-blue-500 bg-blue-50 w-10 h-10 rounded-full flex items-center justify-center hover:bg-blue-100 active:scale-90 transition shadow-sm border border-blue-50"><i class="fas fa-magic text-sm"></i></button>
-                            <select onchange="window.updateStatus('${l.id}', this.value)" class="text-[10px] font-black px-3 py-2 rounded-xl border-none outline-none cursor-pointer ${getStatusStyle(l.status)} active:scale-95 shadow-sm">
+                             <button onclick="window.getAIPitch('${l.id}')" class="text-blue-500 bg-blue-50 w-10 h-10 rounded-full flex items-center justify-center hover:bg-blue-100 active:scale-90 transition border border-blue-50"><i class="fas fa-magic text-sm"></i></button>
+                            <select onchange="window.updateStatus('${l.id}', this.value)" class="text-[10px] font-black px-3 py-2 rounded-xl border-none outline-none ${getStatusStyle(l.status)} active:scale-95 shadow-sm">
                                 <option value="new" ${l.status === 'new' ? 'selected' : ''}>NEW</option>
                                 <option value="follow-up" ${l.status === 'follow-up' ? 'selected' : ''}>FOLLOW-UP</option>
                                 <option value="converted" ${l.status === 'converted' ? 'selected' : ''}>CONVERTED</option>
@@ -596,8 +591,8 @@
         function renderLists() {
             const container = document.getElementById('lists-container');
             if(!container) return;
-            if (leadLists.length === 0 && initialSyncDone) {
-                container.innerHTML = '<div class="col-span-full py-10 text-center text-gray-400 italic font-black uppercase text-[10px] tracking-widest">No lists. Upload one.</div>';
+            if (leadLists.length === 0 && initialSyncCount > 0) {
+                container.innerHTML = '<div class="col-span-full py-10 text-center text-gray-400 italic">No lists yet.</div>';
                 return;
             }
             container.innerHTML = leadLists.map(list => {
@@ -614,8 +609,8 @@
                         </div>
                         <div class="space-y-2 border-t pt-4">
                             <label class="text-[10px] font-black text-gray-400 uppercase ml-1 tracking-widest">Ownership</label>
-                            <select onchange="window.bulkAssignList('${list.id}', this.value)" class="w-full p-4 bg-gray-50 rounded-2xl text-sm border-none outline-none font-bold">
-                                <option value="">Bulk Assign To...</option>
+                            <select onchange="window.bulkAssignList('${list.id}', this.value)" class="w-full p-4 bg-gray-50 rounded-2xl text-sm border-none outline-none font-bold cursor-pointer focus:ring-2 ring-blue-100">
+                                <option value="">Assign Entire List...</option>
                                 ${staff.map(s => `<option value="${s.id}" ${assignedId === s.id ? 'selected' : ''}>${s.name}</option>`).join('')}
                             </select>
                         </div>
@@ -627,8 +622,8 @@
         function renderStaff() {
             const container = document.getElementById('staff-container');
             if(!container) return;
-            if (staff.length === 0 && initialSyncDone) {
-                container.innerHTML = '<div class="col-span-full py-10 text-center text-gray-400 italic font-black uppercase text-[10px] tracking-widest">No staff added.</div>';
+            if (staff.length === 0 && initialSyncCount > 0) {
+                container.innerHTML = '<div class="col-span-full py-10 text-center text-gray-400 italic font-bold uppercase text-[10px] tracking-widest">No team registered.</div>';
                 return;
             }
             container.innerHTML = staff.map(s => {
@@ -642,7 +637,7 @@
                     <h4 class="font-bold text-lg">${s.name}</h4>
                     <p class="text-xs text-gray-400 font-mono tracking-widest uppercase text-[9px]">ID: ${s.id}</p>
                     <div class="grid grid-cols-2 gap-2 mt-6 pt-4 border-t">
-                        <div class="bg-gray-50 p-3 rounded-2xl text-center"><p class="text-[9px] font-bold text-gray-400 uppercase">Bucket</p><p class="text-lg font-black">${sl.length}</p></div>
+                        <div class="bg-gray-50 p-3 rounded-2xl text-center"><p class="text-[9px] font-bold text-gray-400 uppercase">Bucket</p><p class="text-lg font-black text-gray-700">${sl.length}</p></div>
                         <div class="bg-green-50 p-3 rounded-2xl text-center"><p class="text-[9px] font-bold text-green-400 uppercase tracking-tighter">Success</p><p class="text-lg font-black text-green-700">${conv}</p></div>
                     </div>
                 </div>`;
@@ -669,7 +664,7 @@
             `).join('') || '<p class="text-gray-500 text-center py-10 italic">Awaiting results...</p>';
         }
 
-        // --- HANDLERS ---
+        // --- HELPERS ---
         window.debouncedRenderLeads = () => { if(renderTimeout) clearTimeout(renderTimeout); renderTimeout = setTimeout(renderLeads, 150); };
         window.loadMoreLeads = () => { renderLimit += 50; renderLeads(); };
         window.notify = (m, type) => { const t = document.getElementById('toast'); document.getElementById('toast-msg').innerText = m; t.classList.remove('translate-y-20', 'opacity-0'); setTimeout(() => t.classList.add('translate-y-20', 'opacity-0'), 3000); };
@@ -711,7 +706,7 @@
             const f = e.target.files[0]; if (!f) return;
             const label = prompt("Import Label:", f.name.split('.')[0]); if (!label) return;
             const auto = document.getElementById('auto-assign-toggle').checked;
-            setProcessing(true, "Bulk Import Active...");
+            setProcessing(true, "Scanning Excel...");
             const reader = new FileReader();
             reader.onload = async (ev) => {
                 try {
@@ -735,7 +730,6 @@
             reader.readAsArrayBuffer(f);
         };
 
-        // UI HELPERS
         function getStatusStyle(s) { switch(s) { case 'new': return 'bg-blue-100 text-blue-700'; case 'follow-up': return 'bg-orange-100 text-orange-700'; case 'converted': return 'bg-green-100 text-green-700'; case 'rejected': return 'bg-red-100 text-red-700'; default: return 'bg-gray-100 text-gray-500'; } }
         function updateStats() { const f = window.currentUser.role === 'admin' ? leads : leads.filter(l => l.assignedTo === window.currentUser.id); const today = new Date().toISOString().split('T')[0]; document.getElementById('stat-total').innerText = f.length; document.getElementById('stat-converted').innerText = f.filter(x => x.status === 'converted').length; document.getElementById('stat-pending').innerText = f.filter(x => x.followup && x.followup <= today && x.status !== 'converted' && x.status !== 'rejected').length; document.getElementById('stat-rejected').innerText = f.filter(x => x.status === 'rejected').length; }
         function updateChart() { const canvas = document.getElementById('analyticsChart'); if (!canvas) return; const counts = ['new', 'follow-up', 'converted', 'rejected'].map(s => leads.filter(x => x.status === s).length); if (myChart) myChart.destroy(); myChart = new Chart(canvas.getContext('2d'), { type: 'bar', data: { labels: ['New', 'Follow', 'Conv', 'Rej'], datasets: [{ data: counts, backgroundColor: ['#3b82f6', '#f97316', '#10b981', '#ef4444'], borderRadius: 12 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false } } } } }); }
