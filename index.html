@@ -265,7 +265,7 @@
         <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around p-4 z-50 shadow-2xl">
             <button onclick="showView('dashboard')" class="bottom-nav-btn flex-1 flex flex-col items-center gap-1 text-gray-400 active:bg-gray-50 rounded-xl py-2" id="m-btn-dashboard">
                 <i class="fas fa-th-large text-xl"></i>
-                <span class="text-[10px] font-bold uppercase tracking-tighter">Stats</span>
+                <span class="text-[10px] font-bold uppercase tracking-tighter">Dashboard</span>
             </button>
             <button onclick="showView('leads')" class="bottom-nav-btn flex-1 flex flex-col items-center gap-1 text-gray-400 active:bg-gray-50 rounded-xl py-2" id="m-btn-leads">
                 <i class="fas fa-headset text-xl"></i>
@@ -460,7 +460,7 @@
         }
 
         function refreshUI() {
-            // NEVER block data flow with isProcessing for UI refreshes
+            // NEVER block UI updates with isProcessing anymore
             updateStats();
             updateChart();
             updateLeaderboard();
@@ -488,105 +488,63 @@
             refreshUI();
         };
 
-        // --- DASHBOARD ---
-        function updateLeaderboard() {
-            const container = document.getElementById('leaderboard');
-            if (!container) return;
-            const stats = staff.map(s => {
-                const count = leads.filter(l => l.assignedTo === s.id && l.status === 'converted').length;
-                return { name: s.name, count };
-            }).sort((a,b) => b.count - a.count);
+        // --- CORE ACTIONS ---
+        window.updateStatus = async (id, status) => {
+            notify(`${status.toUpperCase()}`);
+            try {
+                const leadRef = doc(db, 'artifacts', appId, 'public', 'data', 'leads', id);
+                await updateDoc(leadRef, { 
+                    status: status, 
+                    updatedAt: Timestamp.now() 
+                });
+            } catch (err) { notify("Cloud Sync Failed", "error"); }
+        };
 
-            container.innerHTML = stats.map((s, idx) => `
-                <div class="flex justify-between items-center bg-white/5 p-4 rounded-2xl border border-white/5 shadow-sm">
-                    <div class="flex items-center gap-3">
-                        <span class="font-black text-gray-500 text-lg">${idx+1}</span>
-                        <span class="font-bold text-gray-200">${s.name}</span>
-                    </div>
-                    <span class="text-xs bg-green-500 text-white px-4 py-1.5 rounded-full font-black shadow-sm">${s.count} ADM</span>
-                </div>
-            `).join('') || '<p class="text-gray-500 text-center py-10 italic">No conversions yet.</p>';
-        }
-
-        // --- LISTS & STAFF ---
-        function renderLists() {
-            const container = document.getElementById('lists-container');
-            if(!container) return;
+        window.shareLead = async (id) => {
+            const l = leads.find(x => x.id === id);
+            if (!l) return;
+            const text = `FutureU CRM Info:\nName: ${l.name}\nPhone: ${l.phone}\nStatus: ${l.status.toUpperCase()}\nNotes: ${l.notes || 'No notes'}`;
             
-            if (leadLists.length === 0) {
-                container.innerHTML = firstSyncDone ? '<div class="col-span-full py-10 text-center text-gray-400 italic">No lists. Upload one above.</div>' : '<div class="py-10 text-center"><div class="loader mx-auto"></div></div>';
-                return;
+            try {
+                if (navigator.share) {
+                    await navigator.share({ title: 'Lead Details', text: text });
+                } else { throw new Error('No Share support'); }
+            } catch (err) {
+                const el = document.createElement('textarea');
+                el.value = text;
+                document.body.appendChild(el);
+                el.select();
+                document.execCommand('copy');
+                document.body.removeChild(el);
+                notify("Copied to Clipboard");
             }
+        };
 
-            container.innerHTML = leadLists.map(list => {
-                const listLeads = leads.filter(l => l.listId === list.id);
-                const assignedTelecallerId = listLeads.length > 0 ? listLeads[0].assignedTo : '';
-                return `
-                    <div class="bg-white p-6 rounded-3xl border shadow-sm space-y-4 fade-in app-card">
-                        <div class="flex justify-between items-start">
-                            <div class="flex-1" onclick="window.renameList('${list.id}')">
-                                <h4 class="font-bold text-lg text-blue-600">${list.name}</h4>
-                                <p class="text-xs text-gray-400 uppercase font-black tracking-tighter">${listLeads.length} Candidates</p>
-                            </div>
-                            <button onclick="window.deleteList('${list.id}')" class="text-red-300 hover:text-red-500 p-2 active:scale-95 transition"><i class="fas fa-trash-alt"></i></button>
-                        </div>
-                        <div class="space-y-2 border-t pt-4">
-                            <label class="text-[10px] font-black text-gray-400 uppercase ml-1">Assigned Telecaller</label>
-                            <select onchange="window.bulkAssignList('${list.id}', this.value)" class="w-full p-4 bg-gray-50 rounded-2xl text-sm border-none outline-none font-bold cursor-pointer focus:ring-2 ring-blue-100">
-                                <option value="">Bulk Assign To...</option>
-                                ${staff.map(s => `<option value="${s.id}" ${assignedTelecallerId === s.id ? 'selected' : ''}>${s.name}</option>`).join('')}
-                            </select>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function renderStaff() {
-            const container = document.getElementById('staff-container');
-            if(!container) return;
+        window.saveLead = async () => {
+            const n = document.getElementById('lead-name').value.trim();
+            const p = document.getElementById('lead-phone').value.trim();
+            const f = document.getElementById('lead-followup').value;
+            const nt = document.getElementById('lead-notes').value.trim();
             
-            if (staff.length === 0) {
-                container.innerHTML = firstSyncDone ? '<div class="col-span-full py-10 text-center text-gray-400 italic font-bold uppercase text-[10px] tracking-widest">No team members. Add one above.</div>' : '<div class="py-10 text-center"><div class="loader mx-auto"></div></div>';
-                return;
-            }
+            if (!n || !p) return notify("Missing Info");
+            
+            notify("Syncing Cloud...");
+            try {
+                const data = { name: n, phone: p, followup: f, notes: nt, updatedAt: Timestamp.now() };
+                const hist = { date: new Date().toLocaleString(), user: window.currentUser.name, note: nt || "Profile Updated" };
 
-            container.innerHTML = staff.map(s => {
-                const staffLeads = leads.filter(l => l.assignedTo === s.id);
-                const conversions = staffLeads.filter(l => l.status === 'converted').length;
-                return `<div class="bg-white p-6 rounded-3xl border shadow-sm app-card">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 font-black text-xl shadow-inner">${s.name.charAt(0)}</div>
-                        <button onclick="window.deleteStaff('${s.id}')" class="text-red-300 hover:text-red-500 p-2 active:scale-95 transition"><i class="fas fa-user-minus"></i></button>
-                    </div>
-                    <h4 class="font-bold text-lg">${s.name}</h4>
-                    <p class="text-xs text-gray-400 font-mono mt-1 tracking-widest uppercase">ID: ${s.id}</p>
-                    <div class="grid grid-cols-2 gap-2 mt-6 pt-4 border-t">
-                        <div class="bg-gray-50 p-3 rounded-2xl text-center">
-                            <p class="text-[9px] font-black text-gray-400 uppercase tracking-tighter">Bucket</p>
-                            <p class="text-lg font-black text-gray-700">${staffLeads.length}</p>
-                        </div>
-                        <div class="bg-green-50 p-3 rounded-2xl text-center">
-                            <p class="text-[9px] font-black text-green-400 uppercase tracking-tighter">Sales</p>
-                            <p class="text-lg font-black text-green-700">${conversions}</p>
-                        </div>
-                    </div>
-                </div>`;
-            }).join('');
-        }
+                if (editingLeadId) {
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', editingLeadId), { ...data, history: arrayUnion(hist) });
+                } else {
+                    data.status = 'new'; data.assignedTo = window.currentUser.id; data.createdAt = Timestamp.now(); data.history = [hist];
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'leads'), data);
+                }
+                closeLeadModal();
+                notify("Cloud Updated");
+            } catch (e) { notify("Sync Failed"); }
+        };
 
-        function updateListFilters() {
-            const filterSelect = document.getElementById('filter-list');
-            if(!filterSelect) return;
-            const currentVal = filterSelect.value;
-            let optionsHtml = '<option value="all">All Marketing Lists</option>';
-            const visibleLists = window.currentUser.role === 'admin' ? leadLists : leadLists.filter(gl => leads.some(l => l.listId === gl.id && l.assignedTo === window.currentUser.id));
-            optionsHtml += visibleLists.map(gl => `<option value="${gl.id}">${gl.name}</option>`).join('');
-            filterSelect.innerHTML = optionsHtml;
-            filterSelect.value = currentVal;
-        }
-
-        // --- LEADS ---
+        // --- UI RENDERING ---
         window.renderLeads = () => {
             const container = document.getElementById('leads-container');
             if (!container) return;
@@ -610,13 +568,13 @@
             const today = new Date().toISOString().split('T')[0];
 
             if (displaySubset.length === 0) {
-                container.innerHTML = firstSyncDone ? '<div class="py-20 text-center text-gray-400 italic">No candidates match filters.</div>' : '<div class="py-20 text-center"><div class="loader mx-auto"></div></div>';
+                container.innerHTML = firstSyncDone ? '<div class="py-20 text-center text-gray-400 italic">No candidates found.</div>' : '<div class="py-20 text-center"><div class="loader mx-auto"></div></div>';
                 return;
             }
 
             container.innerHTML = displaySubset.map(l => {
                 const isDue = l.followup && l.followup <= today && l.status !== 'converted' && l.status !== 'rejected';
-                const listName = leadLists.find(gl => gl.id === l.listId)?.name || 'Manual Entry';
+                const listName = leadLists.find(gl => gl.id === l.listId)?.name || 'Manual';
                 return `
                 <div class="bg-white p-5 app-card border shadow-sm space-y-4 fade-in ${isDue ? 'border-orange-200 bg-orange-50/20' : ''}">
                     <div class="flex justify-between items-start">
@@ -629,13 +587,13 @@
                                 </h3>
                                 <p class="text-sm font-mono text-gray-500 mt-0.5 tracking-tight">${l.phone}</p>
                                 <div class="flex flex-wrap gap-1 mt-2">
-                                    <span class="text-[8px] bg-blue-100 text-blue-600 px-2 py-0.5 rounded-lg font-black uppercase tracking-wider">${listName}</span>
-                                    ${l.followup ? `<span class="text-[8px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-lg font-black uppercase">📅 Due: ${l.followup}</span>` : ''}
+                                    <span class="text-[8px] bg-blue-100 text-blue-600 px-2 py-0.5 rounded font-black uppercase tracking-wider">${listName}</span>
+                                    ${l.followup ? `<span class="text-[8px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded font-bold uppercase tracking-wider">📅 ${l.followup}</span>` : ''}
                                 </div>
                             </div>
                         </div>
                         <div class="flex flex-col items-end gap-2">
-                             <button onclick="window.getAIPitch('${l.id}')" class="text-blue-500 bg-blue-50 w-10 h-10 rounded-full flex items-center justify-center hover:bg-blue-100 active:scale-90 transition shadow-sm border border-blue-100"><i class="fas fa-magic text-sm"></i></button>
+                             <button onclick="window.getAIPitch('${l.id}')" class="text-blue-500 bg-blue-50 w-10 h-10 rounded-full flex items-center justify-center hover:bg-blue-100 active:scale-90 transition shadow-sm border border-blue-50"><i class="fas fa-magic text-sm"></i></button>
                             <select onchange="window.updateStatus('${l.id}', this.value)" class="text-[10px] font-black px-3 py-2 rounded-xl border-none outline-none cursor-pointer ${getStatusStyle(l.status)} active:scale-95 shadow-sm">
                                 <option value="new" ${l.status === 'new' ? 'selected' : ''}>NEW</option>
                                 <option value="follow-up" ${l.status === 'follow-up' ? 'selected' : ''}>FOLLOW-UP</option>
@@ -658,39 +616,92 @@
             if (lb) lb.classList.toggle('hidden', filtered.length <= renderLimit);
         };
 
-        // --- HANDLERS (NON-BLOCKING) ---
+        // --- DASHBOARD UI ---
+        function updateLeaderboard() {
+            const container = document.getElementById('leaderboard');
+            if (!container) return;
+            const stats = staff.map(s => {
+                const count = leads.filter(l => l.assignedTo === s.id && l.status === 'converted').length;
+                return { name: s.name, count };
+            }).sort((a,b) => b.count - a.count);
+
+            container.innerHTML = stats.map((s, idx) => `
+                <div class="flex justify-between items-center bg-white/5 p-4 rounded-2xl border border-white/5 shadow-sm active:bg-white/10 transition">
+                    <div class="flex items-center gap-3">
+                        <span class="font-black text-gray-600 text-lg">${idx+1}</span>
+                        <span class="font-bold text-gray-200">${s.name}</span>
+                    </div>
+                    <span class="text-xs bg-green-500 text-white px-4 py-1.5 rounded-full font-black shadow-sm">${s.count} ADM</span>
+                </div>
+            `).join('') || '<p class="text-gray-500 text-center py-10 italic">Awaiting results...</p>';
+        }
+
+        function renderLists() {
+            const container = document.getElementById('lists-container');
+            if(!container) return;
+            if (leadLists.length === 0) {
+                container.innerHTML = firstSyncDone ? '<div class="col-span-full py-10 text-center text-gray-400 italic">No marketing lists.</div>' : '';
+                return;
+            }
+            container.innerHTML = leadLists.map(list => {
+                const listLeads = leads.filter(l => l.listId === list.id);
+                const assignedTelecallerId = listLeads.length > 0 ? listLeads[0].assignedTo : '';
+                return `
+                    <div class="bg-white p-6 rounded-3xl border shadow-sm space-y-4 fade-in app-card">
+                        <div class="flex justify-between items-start">
+                            <div class="flex-1" onclick="window.renameList('${list.id}')">
+                                <h4 class="font-bold text-lg text-blue-600">${list.name}</h4>
+                                <p class="text-xs text-gray-400 uppercase font-black tracking-tighter">${listLeads.length} Candidates</p>
+                            </div>
+                            <button onclick="window.deleteList('${list.id}')" class="text-red-300 hover:text-red-500 p-2 active:scale-95 transition"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                        <div class="space-y-2 border-t pt-4">
+                            <label class="text-[10px] font-black text-gray-400 uppercase ml-1 tracking-widest">Bulk Assign</label>
+                            <select onchange="window.bulkAssignList('${list.id}', this.value)" class="w-full p-4 bg-gray-50 rounded-2xl text-sm border-none outline-none font-bold cursor-pointer focus:ring-2 ring-blue-100">
+                                <option value="">Bulk Assign To...</option>
+                                ${staff.map(s => `<option value="${s.id}" ${assignedTelecallerId === s.id ? 'selected' : ''}>${s.name}</option>`).join('')}
+                            </select>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderStaff() {
+            const container = document.getElementById('staff-container');
+            if(!container) return;
+            if (staff.length === 0) {
+                container.innerHTML = firstSyncDone ? '<div class="col-span-full py-10 text-center text-gray-400 italic font-bold uppercase text-[10px] tracking-widest">No staff registered.</div>' : '';
+                return;
+            }
+            container.innerHTML = staff.map(s => {
+                const staffLeads = leads.filter(l => l.assignedTo === s.id);
+                const conversions = staffLeads.filter(l => l.status === 'converted').length;
+                return `<div class="bg-white p-6 rounded-3xl border shadow-sm app-card">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 font-black text-xl shadow-inner">${s.name.charAt(0)}</div>
+                        <button onclick="window.deleteStaff('${s.id}')" class="text-red-300 hover:text-red-500 p-2 active:scale-95 transition"><i class="fas fa-user-minus"></i></button>
+                    </div>
+                    <h4 class="font-bold text-lg">${s.name}</h4>
+                    <p class="text-xs text-gray-400 font-mono mt-1 tracking-widest uppercase text-[9px]">ID: ${s.id}</p>
+                    <div class="grid grid-cols-2 gap-2 mt-6 pt-4 border-t">
+                        <div class="bg-gray-50 p-3 rounded-2xl text-center">
+                            <p class="text-[9px] font-black text-gray-400 uppercase tracking-tighter">Bucket</p>
+                            <p class="text-lg font-black text-gray-700">${staffLeads.length}</p>
+                        </div>
+                        <div class="bg-green-50 p-3 rounded-2xl text-center">
+                            <p class="text-[9px] font-black text-green-400 uppercase tracking-tighter">Sales</p>
+                            <p class="text-lg font-black text-green-700">${conversions}</p>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        // --- HANDLERS ---
         window.debouncedRenderLeads = () => { if(renderTimeout) clearTimeout(renderTimeout); renderTimeout = setTimeout(renderLeads, 100); };
         window.loadMoreLeads = () => { renderLimit += 50; renderLeads(); };
-        window.notify = (m) => { const t = document.getElementById('toast'); document.getElementById('toast-msg').innerText = m; t.classList.remove('translate-y-20', 'opacity-0'); setTimeout(() => t.classList.add('translate-y-20', 'opacity-0'), 3000); };
         window.setProcessing = (v, text) => { isProcessing = v; document.getElementById('processing-text').innerText = text || "Processing..."; document.getElementById('processing-overlay').classList.toggle('hidden', !v); };
-        
-        window.updateStatus = async (id, status) => {
-            notify(`${status.toUpperCase()}`);
-            try {
-                const leadRef = doc(db, 'artifacts', appId, 'public', 'data', 'leads', id);
-                await updateDoc(leadRef, { status: status, updatedAt: Timestamp.now() });
-            } catch (err) { notify("Sync Failed"); }
-        };
-
-        window.saveLead = async () => {
-            const n = document.getElementById('lead-name').value.trim();
-            const p = document.getElementById('lead-phone').value.trim();
-            const f = document.getElementById('lead-followup').value;
-            const nt = document.getElementById('lead-notes').value.trim();
-            if (!n || !p) return notify("Name & Number Required");
-            
-            notify("Syncing Cloud...");
-            try {
-                const data = { name: n, phone: p, followup: f, notes: nt, updatedAt: Timestamp.now() };
-                const hist = { date: new Date().toLocaleString(), user: window.currentUser.name, note: nt || "Profile Synced" };
-                if (editingLeadId) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', editingLeadId), { ...data, history: arrayUnion(hist) });
-                else {
-                    data.status = 'new'; data.assignedTo = window.currentUser.id; data.createdAt = Timestamp.now(); data.history = [hist];
-                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'leads'), data);
-                }
-                closeLeadModal();
-            } catch (e) { notify("Sync Error"); }
-        };
 
         window.openLeadModal = (id = null) => {
             editingLeadId = id;
@@ -712,20 +723,9 @@
             document.getElementById('lead-modal').classList.remove('hidden');
         };
 
-        window.saveEmployee = async () => {
-            const n = document.getElementById('staff-name').value.trim(), i = document.getElementById('staff-id').value.trim(), p = document.getElementById('staff-pass').value.trim();
-            if(!n || !i || !p) return notify("Fields required");
-            setProcessing(true, "Registering Member...");
-            try {
-                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', i), { name: n, password: p, role: 'telecaller' });
-                closeStaffModal(); notify("Member Added");
-            } catch(e) { notify("Add Failed"); }
-            setProcessing(false);
-        };
-
         window.handleExcelUpload = (e) => {
             const f = e.target.files[0]; if (!f) return;
-            const label = prompt("Import Label:", f.name.split('.')[0]); if (!label) return;
+            const label = prompt("Marketing Label:", f.name.split('.')[0]); if (!label) return;
             const auto = document.getElementById('auto-assign-toggle').checked;
             setProcessing(true, "Optimizing Import...");
             const reader = new FileReader();
@@ -744,22 +744,14 @@
                             imp++; if(auto && staff.length > 0) staffIdx++;
                         }
                     }
-                    notify(`Imported ${imp} Leads`); showView('lists');
-                } catch (err) { notify("Import Error"); }
+                    notify(`Success: ${imp} Leads`); showView('lists');
+                } catch (err) { notify("Excel Format Error"); }
                 setProcessing(false);
             };
             reader.readAsArrayBuffer(f);
         };
 
-        // --- UI UTILS ---
-        function getStatusStyle(s) { switch(s) { case 'new': return 'bg-blue-100 text-blue-700'; case 'follow-up': return 'bg-orange-100 text-orange-700'; case 'converted': return 'bg-green-100 text-green-700'; case 'rejected': return 'bg-red-100 text-red-700'; default: return 'bg-gray-100 text-gray-500'; } }
-        function updateStats() { const f = window.currentUser.role === 'admin' ? leads : leads.filter(l => l.assignedTo === window.currentUser.id); const today = new Date().toISOString().split('T')[0]; document.getElementById('stat-total').innerText = f.length; document.getElementById('stat-converted').innerText = f.filter(x => x.status === 'converted').length; document.getElementById('stat-pending').innerText = f.filter(x => x.followup && x.followup <= today && x.status !== 'converted' && x.status !== 'rejected').length; document.getElementById('stat-rejected').innerText = f.filter(x => x.status === 'rejected').length; }
-        function updateChart() { const canvas = document.getElementById('analyticsChart'); if (!canvas) return; const counts = ['new', 'follow-up', 'converted', 'rejected'].map(s => leads.filter(x => x.status === s).length); if (myChart) myChart.destroy(); myChart = new Chart(canvas.getContext('2d'), { type: 'bar', data: { labels: ['New', 'Follow', 'Conv', 'Rej'], datasets: [{ data: counts, backgroundColor: ['#3b82f6', '#f97316', '#10b981', '#ef4444'], borderRadius: 12 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false } } } } }); }
-        
-        window.closeLeadModal = () => document.getElementById('lead-modal').classList.add('hidden');
-        window.closeStaffModal = () => document.getElementById('staff-modal').classList.add('hidden');
-        window.openStaffModal = () => { document.getElementById('staff-name').value=''; document.getElementById('staff-id').value=''; document.getElementById('staff-pass').value=''; document.getElementById('staff-modal').classList.remove('hidden'); };
-        window.copyToClipboard = (t) => { const el = document.createElement('textarea'); el.value = t; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); notify("AI Pitch Copied"); };
+        // --- UTILS ---
         window.getAIPitch = async (id) => {
             const l = leads.find(x => x.id === id); const modal = document.getElementById('ai-modal'); const content = document.getElementById('ai-content');
             modal.classList.remove('hidden'); content.innerHTML = '<div class="loader mx-auto"></div>';
@@ -824,6 +816,29 @@
             if (p.length === 10) p = '91' + p; 
             window.open(`https://wa.me/${p}?text=${encodeURIComponent('Hello ' + (l.name || 'Candidate') + ', this is FutureU Institute. Are you still interested in our professional programs?')}`, '_blank');
         };
+
+        window.exportCurrentLeads = () => {
+            const statusFilter = document.getElementById('filter-status').value;
+            const listFilter = document.getElementById('filter-list').value;
+            let exportData = leads;
+            if (window.currentUser.role !== 'admin') exportData = leads.filter(l => l.assignedTo === window.currentUser.id);
+            if (statusFilter !== 'all') exportData = exportData.filter(l => l.status === statusFilter);
+            if (listFilter !== 'all') exportData = exportData.filter(l => l.listId === listFilter);
+
+            const worksheet = XLSX.utils.json_to_sheet(exportData.map(l => ({ Name: l.name, Phone: l.phone, Status: l.status, Notes: l.notes || "", Date: l.createdAt?.toDate().toLocaleDateString() })));
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Leads");
+            XLSX.writeFile(workbook, `FutureU_CRM_Export.xlsx`);
+        };
+
+        function getStatusStyle(s) { switch(s) { case 'new': return 'bg-blue-100 text-blue-700'; case 'follow-up': return 'bg-orange-100 text-orange-700'; case 'converted': return 'bg-green-100 text-green-700'; case 'rejected': return 'bg-red-100 text-red-700'; default: return 'bg-gray-100 text-gray-500'; } }
+        function updateStats() { const f = window.currentUser.role === 'admin' ? leads : leads.filter(l => l.assignedTo === window.currentUser.id); const today = new Date().toISOString().split('T')[0]; document.getElementById('stat-total').innerText = f.length; document.getElementById('stat-converted').innerText = f.filter(x => x.status === 'converted').length; document.getElementById('stat-pending').innerText = f.filter(x => x.followup && x.followup <= today && x.status !== 'converted' && x.status !== 'rejected').length; document.getElementById('stat-rejected').innerText = f.filter(x => x.status === 'rejected').length; }
+        function updateChart() { const canvas = document.getElementById('analyticsChart'); if (!canvas) return; const counts = ['new', 'follow-up', 'converted', 'rejected'].map(s => leads.filter(x => x.status === s).length); if (myChart) myChart.destroy(); myChart = new Chart(canvas.getContext('2d'), { type: 'bar', data: { labels: ['New', 'Follow', 'Conv', 'Rej'], datasets: [{ data: counts, backgroundColor: ['#3b82f6', '#f97316', '#10b981', '#ef4444'], borderRadius: 12 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false } } } } }); }
+        
+        window.closeLeadModal = () => document.getElementById('lead-modal').classList.add('hidden');
+        window.closeStaffModal = () => document.getElementById('staff-modal').classList.add('hidden');
+        window.openStaffModal = () => { document.getElementById('staff-name').value=''; document.getElementById('staff-id').value=''; document.getElementById('staff-pass').value=''; document.getElementById('staff-modal').classList.remove('hidden'); };
+        window.copyToClipboard = (t) => { const el = document.createElement('textarea'); el.value = t; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); notify("Copied!"); };
 
         initAuth();
     </script>
