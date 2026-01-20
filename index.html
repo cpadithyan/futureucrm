@@ -49,10 +49,10 @@
 </head>
 <body class="bg-gray-50 min-h-screen text-gray-800">
 
-    <!-- Global Processing Overlay (Used only for bulk tasks) -->
+    <!-- Global Processing Overlay -->
     <div id="processing-overlay" class="fixed inset-0 z-[200] hidden flex flex-col items-center justify-center">
         <div class="loader w-14 h-14 border-4 mb-4"></div>
-        <p id="processing-text" class="font-bold text-blue-600 animate-pulse text-lg text-center">Syncing FutureU Data...</p>
+        <p id="processing-text" class="font-bold text-blue-600 animate-pulse text-lg text-center">Syncing Cloud...</p>
     </div>
 
     <!-- Auth Overlay -->
@@ -79,7 +79,7 @@
 
     <div id="app-container" class="hidden flex h-screen overflow-hidden">
         
-        <!-- Sidebar (Desktop Only) -->
+        <!-- Sidebar (Desktop) -->
         <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-white border-r flex flex-col transform -translate-x-full transition-transform md:relative md:translate-x-0">
             <div class="p-6 border-b">
                 <h2 class="text-xl font-bold text-blue-600 flex items-center gap-2">
@@ -114,7 +114,7 @@
             </div>
         </aside>
 
-        <!-- Main Content -->
+        <!-- Main Content Area -->
         <main class="flex-1 overflow-y-auto bg-gray-50 pb-24 md:pb-8 scroll-container relative safe-area-pb">
             <div class="p-4 md:p-8 max-w-6xl mx-auto space-y-6">
                 
@@ -126,10 +126,22 @@
                     </div>
 
                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 text-center">
-                        <div class="bg-white p-6 rounded-[1.5rem] border shadow-sm"><p class="text-gray-400 text-[10px] font-bold uppercase">Leads</p><h3 class="text-2xl font-bold mt-1" id="stat-total">0</h3></div>
-                        <div class="bg-green-600 p-6 rounded-[1.5rem] text-white shadow-lg"><p class="text-green-100 text-[10px] font-bold uppercase">Converted</p><h3 class="text-2xl font-bold mt-1" id="stat-converted">0</h3></div>
-                        <div class="bg-white p-6 rounded-[1.5rem] border shadow-sm text-orange-500"><p class="text-gray-400 text-[10px] font-bold uppercase">Due</p><h3 class="text-2xl font-bold mt-1" id="stat-pending">0</h3></div>
-                        <div class="bg-white p-6 rounded-[1.5rem] border shadow-sm text-red-500"><p class="text-gray-400 text-[10px] font-bold uppercase">Rejected</p><h3 class="text-2xl font-bold mt-1" id="stat-rejected">0</h3></div>
+                        <div class="bg-white p-6 rounded-[1.5rem] border shadow-sm text-center">
+                            <p class="text-gray-400 text-[10px] font-bold uppercase tracking-tighter">Total Leads</p>
+                            <h3 class="text-2xl font-bold mt-1" id="stat-total">0</h3>
+                        </div>
+                        <div class="bg-green-600 p-6 rounded-[1.5rem] text-white shadow-lg text-center">
+                            <p class="text-green-100 text-[10px] font-bold uppercase tracking-tighter">Converted</p>
+                            <h3 class="text-2xl font-bold mt-1" id="stat-converted">0</h3>
+                        </div>
+                        <div class="bg-white p-6 rounded-[1.5rem] border shadow-sm text-orange-500 text-center">
+                            <p class="text-gray-400 text-[10px] font-bold uppercase tracking-tighter">Follow Dues</p>
+                            <h3 class="text-2xl font-bold mt-1" id="stat-pending">0</h3>
+                        </div>
+                        <div class="bg-white p-6 rounded-[1.5rem] border shadow-sm text-red-500 text-center">
+                            <p class="text-gray-400 text-[10px] font-bold uppercase tracking-tighter">Rejected</p>
+                            <h3 class="text-2xl font-bold mt-1" id="stat-rejected">0</h3>
+                        </div>
                     </div>
 
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -138,8 +150,10 @@
                             <div class="h-64 relative"><canvas id="analyticsChart"></canvas></div>
                         </div>
                         <div class="bg-gray-900 p-6 rounded-[2rem] text-white flex flex-col min-h-[300px]">
-                            <h4 class="font-bold mb-4 flex items-center gap-2 text-yellow-400"><i class="fas fa-crown"></i> Team Leaderboard</h4>
-                            <div id="leaderboard" class="space-y-4 overflow-y-auto flex-1 text-sm scroll-container"></div>
+                            <h4 class="font-bold mb-4 flex items-center gap-2 text-yellow-400"><i class="fas fa-crown"></i> Team Rankings</h4>
+                            <div id="leaderboard" class="space-y-4 overflow-y-auto flex-1 text-sm scroll-container">
+                                <p class="text-gray-500 text-center py-10 italic font-bold text-xs uppercase tracking-widest">Updating cloud stats...</p>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -149,9 +163,15 @@
                     <div class="flex justify-between items-center">
                         <h1 class="text-2xl font-bold">Bucket</h1>
                         <div class="flex gap-2">
-                             <button onclick="toggleSelectMode()" id="select-mode-btn" class="bg-gray-100 text-gray-600 px-4 py-3 rounded-2xl font-bold active:scale-95 transition"><i class="fas fa-check-square"></i></button>
-                             <button onclick="exportCurrentLeads()" class="bg-white border border-gray-200 text-gray-700 px-4 py-3 rounded-2xl font-bold active:scale-95 transition"><i class="fas fa-download"></i></button>
-                            <button onclick="openLeadModal()" class="bg-blue-600 text-white px-6 py-3 rounded-2xl font-bold shadow-lg active:scale-95 transition"><i class="fas fa-plus"></i></button>
+                             <button onclick="toggleSelectMode()" id="select-mode-btn" class="bg-gray-100 text-gray-600 px-4 py-3 rounded-2xl font-bold active:scale-95 transition cursor-pointer">
+                                <i class="fas fa-check-square"></i>
+                            </button>
+                             <button onclick="exportCurrentLeads()" class="bg-white border border-gray-200 text-gray-700 px-4 py-3 rounded-2xl font-bold active:scale-95 transition cursor-pointer">
+                                <i class="fas fa-download"></i>
+                            </button>
+                            <button onclick="openLeadModal()" class="bg-blue-600 text-white px-6 py-3 rounded-2xl font-bold shadow-lg active:scale-95 transition cursor-pointer">
+                                <i class="fas fa-plus"></i>
+                            </button>
                         </div>
                     </div>
 
@@ -161,24 +181,25 @@
                             <input type="text" id="search-input" oninput="debouncedRenderLeads()" class="w-full pl-12 pr-4 py-4 bg-gray-50 rounded-xl outline-none border-none text-base" placeholder="Search phone or name...">
                         </div>
                         <div class="grid grid-cols-2 gap-2">
-                            <select id="filter-status" onchange="debouncedRenderLeads()" class="p-4 bg-gray-50 rounded-xl font-bold text-sm outline-none border-none">
+                            <select id="filter-status" onchange="debouncedRenderLeads()" class="p-4 bg-gray-50 rounded-xl font-bold text-sm outline-none border-none cursor-pointer">
                                 <option value="all">All Status</option>
                                 <option value="new">🆕 New</option>
                                 <option value="follow-up">⏳ Follow-up</option>
                                 <option value="converted">✅ Converted</option>
                                 <option value="rejected">❌ Rejected</option>
                             </select>
-                            <select id="sort-order" onchange="debouncedRenderLeads()" class="p-4 bg-gray-50 rounded-xl font-bold text-sm outline-none border-none">
+                            <select id="sort-order" onchange="debouncedRenderLeads()" class="p-4 bg-gray-50 rounded-xl font-bold text-sm outline-none border-none cursor-pointer">
                                 <option value="newest">Latest First</option>
                                 <option value="name">A-Z Name</option>
                                 <option value="followup">Follow-up Due</option>
                             </select>
                         </div>
-                        <select id="filter-list" onchange="debouncedRenderLeads()" class="p-4 bg-gray-50 rounded-xl font-bold text-sm outline-none border-none w-full">
+                        <select id="filter-list" onchange="debouncedRenderLeads()" class="p-4 bg-gray-50 rounded-xl font-bold text-sm outline-none border-none w-full cursor-pointer">
                             <option value="all">All Marketing Lists</option>
                         </select>
                     </div>
 
+                    <!-- Batch Actions -->
                     <div id="batch-actions" class="hidden bg-blue-600 p-4 rounded-2xl flex justify-between items-center text-white shadow-xl">
                         <span id="selected-count" class="font-bold text-sm">0 Selected</span>
                         <div class="flex gap-2">
@@ -188,7 +209,9 @@
                         </div>
                     </div>
 
-                    <div id="leads-container" class="space-y-4"></div>
+                    <div id="leads-container" class="space-y-4 min-h-[200px]">
+                        <div class="py-20 text-center"><div class="loader mx-auto"></div></div>
+                    </div>
                     <div id="load-more-btn" class="hidden text-center py-6">
                         <button onclick="loadMoreLeads()" class="bg-gray-900 text-white px-10 py-4 rounded-2xl font-bold active:scale-95 transition w-full md:w-auto">Load More Leads</button>
                     </div>
@@ -198,19 +221,23 @@
                 <section id="view-lists" class="view hidden space-y-6 fade-in">
                     <div class="flex justify-between items-center">
                         <h1 class="text-2xl font-bold">Marketing Lists</h1>
-                        <button onclick="document.getElementById('excel-input').click()" class="bg-blue-600 text-white px-6 py-3 rounded-2xl font-bold shadow-lg active:scale-95 transition"><i class="fas fa-upload"></i> Upload List</button>
+                        <button onclick="document.getElementById('excel-input').click()" class="bg-blue-600 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 active:scale-95 transition cursor-pointer">
+                            <i class="fas fa-upload"></i> Upload List
+                        </button>
                         <input type="file" id="excel-input" class="hidden" accept=".xlsx,.xls,.csv" onchange="handleExcelUpload(event)">
                     </div>
-                    <div id="lists-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                    <div id="lists-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 min-h-[100px]"></div>
                 </section>
 
-                <!-- Staff Portal View -->
+                <!-- Staff View -->
                 <section id="view-staff" class="view hidden space-y-6 fade-in">
                     <div class="flex justify-between items-center">
                         <h1 class="text-2xl font-bold">Team Portal</h1>
-                        <button onclick="openStaffModal()" class="bg-black text-white px-6 py-3 rounded-2xl font-bold shadow-lg active:scale-95 transition"><i class="fas fa-user-plus"></i> Add Staff</button>
+                        <button onclick="openStaffModal()" class="bg-black text-white px-6 py-3 rounded-2xl font-bold active:scale-95 transition cursor-pointer">
+                            <i class="fas fa-user-plus"></i> Add Employee
+                        </button>
                     </div>
-                    <div id="staff-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                    <div id="staff-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 min-h-[100px]"></div>
                 </section>
 
             </div>
@@ -241,11 +268,11 @@
     <div id="ai-modal" class="fixed inset-0 z-[120] hidden flex items-center justify-center p-4 modal-bg">
         <div class="bg-white rounded-[2rem] w-full max-w-lg shadow-2xl overflow-hidden p-8 space-y-6">
             <div class="flex justify-between items-center">
-                <h3 class="text-xl font-bold text-blue-600 flex items-center gap-2"><i class="fas fa-magic"></i> FutureU AI</h3>
-                <button onclick="document.getElementById('ai-modal').classList.add('hidden')" class="text-gray-400 p-2"><i class="fas fa-times text-lg"></i></button>
+                <h3 class="text-xl font-bold text-blue-600 flex items-center gap-2"><i class="fas fa-magic"></i> FutureU AI Pitch</h3>
+                <button onclick="document.getElementById('ai-modal').classList.add('hidden')" class="text-gray-400 p-2 active:scale-95 transition"><i class="fas fa-times text-lg"></i></button>
             </div>
             <div id="ai-content" class="bg-blue-50 p-6 rounded-2xl text-blue-900 leading-relaxed italic border border-blue-100 min-h-[100px] flex items-center justify-center text-sm"></div>
-            <button onclick="copyToClipboard(document.getElementById('ai-content').innerText)" class="w-full py-5 bg-blue-600 text-white rounded-2xl font-bold shadow-lg active:scale-95 transition">Copy Pitch</button>
+            <button onclick="copyToClipboard(document.getElementById('ai-content').innerText)" class="w-full py-5 bg-blue-600 text-white rounded-2xl font-bold shadow-lg active:scale-95 transition">Copy script</button>
         </div>
     </div>
 
@@ -258,7 +285,7 @@
             </div>
             <div class="flex-1 overflow-y-auto p-6 space-y-6 scroll-container">
                 <div class="space-y-4">
-                    <div><label class="text-[10px] font-bold text-gray-400 uppercase ml-2 mb-1 block tracking-widest">Full Name</label><input type="text" id="lead-name" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border text-base"></div>
+                    <div><label class="text-[10px] font-bold text-gray-400 uppercase ml-2 mb-1 block tracking-widest">Candidate Name</label><input type="text" id="lead-name" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border text-base"></div>
                     <div><label class="text-[10px] font-bold text-gray-400 uppercase ml-2 mb-1 block tracking-widest">Phone</label><input type="tel" id="lead-phone" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border text-base"></div>
                     <div><label class="text-[10px] font-bold text-gray-400 uppercase ml-2 mb-1 block tracking-widest">Follow-up Date</label><input type="date" id="lead-followup" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border text-base"></div>
                     <div><label class="text-[10px] font-bold text-gray-400 uppercase ml-2 mb-1 block tracking-widest">Interaction Notes</label><textarea id="lead-notes" rows="4" placeholder="Update student interest..." class="w-full p-4 bg-gray-50 rounded-2xl outline-none border text-base"></textarea></div>
@@ -313,7 +340,7 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Persistent App State
+        // State
         let user = null;
         let leads = [];
         let staff = [];
@@ -325,7 +352,7 @@
         let selectedLeads = new Set();
         let renderLimit = 50;
         let renderTimeout = null;
-        let initialSyncCount = 0;
+        let initialSyncDone = false;
 
         // --- AUTH ---
         const initAuth = async () => {
@@ -361,9 +388,9 @@
                 if (userSnap.exists() && userSnap.data().password === pass) {
                     proceedLogin({ id, name: userSnap.data().name, role: 'telecaller' });
                 } else {
-                    notify("Invalid Login Details", "error");
+                    notify("Incorrect ID or Password", "error");
                 }
-            } catch (err) { notify("Sync Connection Error"); }
+            } catch (err) { notify("Connection Error"); }
         };
 
         function proceedLogin(userData) {
@@ -374,7 +401,7 @@
 
         window.logout = () => { localStorage.removeItem('crm_session_v3'); location.reload(); };
 
-        // --- CORE SYNC ENGINE ---
+        // --- APP SYNC ---
         function setupApp() {
             if (!user) return;
             document.getElementById('auth-overlay').classList.add('hidden');
@@ -385,30 +412,28 @@
 
             if (window.currentUser.role !== 'admin') document.querySelectorAll('.admin-only').forEach(e => e.remove());
             
-            // Start snapshot listeners with auto-refresh
+            // Unified Real-time synchronization
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'leads'), (snap) => {
                 leads = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                initialSyncCount++;
+                initialSyncDone = true;
                 refreshUI();
-            });
+            }, (err) => console.error("Leads Sync Error"));
 
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'users'), (snap) => {
                 staff = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                initialSyncCount++;
                 refreshUI();
-            });
+            }, (err) => console.error("Staff Sync Error"));
 
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'lead_groups'), (snap) => {
                 leadLists = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                initialSyncCount++;
                 refreshUI();
-            });
+            }, (err) => console.error("Lists Sync Error"));
 
             showView('dashboard');
         }
 
         function refreshUI() {
-            // Logic is robust: render everything that's available immediately
+            // NEVER block UI updates with isProcessing anymore
             updateStats();
             updateChart();
             updateLeaderboard();
@@ -419,10 +444,16 @@
         }
 
         window.showView = (name) => {
-            document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
-            const targetView = document.getElementById('view-' + name);
-            if (targetView) targetView.classList.remove('hidden');
+            const views = document.querySelectorAll('.view');
+            views.forEach(v => v.classList.add('hidden'));
             
+            const targetView = document.getElementById('view-' + name);
+            if (targetView) {
+                targetView.classList.remove('hidden');
+                targetView.classList.add('fade-in');
+            }
+            
+            // UI States
             document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('sidebar-active'));
             const dBtn = document.getElementById('btn-' + name);
             if (dBtn) dBtn.classList.add('sidebar-active');
@@ -434,7 +465,7 @@
             refreshUI();
         };
 
-        // --- CORE ACTIONS (PERSISTENT) ---
+        // --- ACTIONS ---
         window.updateStatus = async (id, status) => {
             notify(`${status.toUpperCase()}`);
             try {
@@ -473,7 +504,7 @@
             const p = document.getElementById('lead-phone').value.trim();
             const f = document.getElementById('lead-followup').value;
             const nt = document.getElementById('lead-notes').value.trim();
-            if (!n || !p) return notify("Missing Critical Info");
+            if (!n || !p) return notify("Missing Info");
             
             try {
                 const data = { name: n, phone: p, followup: f, notes: nt, updatedAt: Timestamp.now() };
@@ -490,7 +521,7 @@
             } catch (e) { notify("Sync Failed"); }
         };
 
-        // --- RENDERING PORTALS ---
+        // --- UI RENDERING ---
         window.renderLeads = () => {
             const container = document.getElementById('leads-container');
             if (!container) return;
@@ -513,7 +544,7 @@
             const displaySubset = filtered.slice(0, renderLimit);
             const today = new Date().toISOString().split('T')[0];
 
-            if (displaySubset.length === 0 && initialSyncCount > 0) {
+            if (displaySubset.length === 0 && initialSyncDone) {
                 container.innerHTML = '<div class="py-20 text-center text-gray-400 italic">No candidates found.</div>';
                 return;
             }
@@ -525,22 +556,22 @@
                 <div class="bg-white p-5 app-card border shadow-sm space-y-4 fade-in ${isDue ? 'border-orange-200 bg-orange-50/20' : ''}">
                     <div class="flex justify-between items-start">
                         <div class="flex items-start gap-3 flex-1 overflow-hidden" onclick="window.openLeadModal('${l.id}')">
-                            ${selectMode ? `<input type="checkbox" onchange="window.toggleLeadSelection('${l.id}')" ${selectedLeads.has(l.id) ? 'checked' : ''} class="w-6 h-6 mt-1">` : ''}
+                            ${selectMode ? `<input type="checkbox" onchange="window.toggleLeadSelection('${l.id}')" ${selectedLeads.has(l.id) ? 'checked' : ''} class="w-6 h-6 mt-1 cursor-pointer">` : ''}
                             <div class="flex-1 truncate">
-                                <h3 class="text-lg font-black truncate active:text-blue-600 transition flex items-center gap-2">
+                                <h3 class="text-lg font-black truncate flex items-center gap-2 active:text-blue-600 transition">
                                     ${l.name || '<span class="font-normal italic">New Candidate</span>'}
-                                    ${isDue ? '<span class="w-2 h-2 bg-orange-500 rounded-full animate-ping"></span>' : ''}
+                                    ${isDue ? '<span class="w-2.5 h-2.5 bg-orange-500 rounded-full animate-pulse"></span>' : ''}
                                 </h3>
-                                <p class="text-sm font-mono text-gray-500 mt-0.5">${l.phone}</p>
+                                <p class="text-sm font-mono text-gray-500 mt-0.5 tracking-tight">${l.phone}</p>
                                 <div class="flex flex-wrap gap-1 mt-2">
-                                    <span class="text-[8px] bg-blue-100 text-blue-600 px-2 py-0.5 rounded font-black uppercase">${listName}</span>
-                                    ${l.followup ? `<span class="text-[8px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded font-bold">📅 ${l.followup}</span>` : ''}
+                                    <span class="text-[8px] bg-blue-100 text-blue-600 px-2 py-0.5 rounded font-black uppercase tracking-wider">${listName}</span>
+                                    ${l.followup ? `<span class="text-[8px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded font-black uppercase">📅 ${l.followup}</span>` : ''}
                                 </div>
                             </div>
                         </div>
                         <div class="flex flex-col items-end gap-2">
-                             <button onclick="window.getAIPitch('${l.id}')" class="text-blue-500 bg-blue-50 w-10 h-10 rounded-full flex items-center justify-center hover:bg-blue-100 active:scale-90 transition border border-blue-50"><i class="fas fa-magic text-sm"></i></button>
-                            <select onchange="window.updateStatus('${l.id}', this.value)" class="text-[10px] font-black px-3 py-2 rounded-xl border-none outline-none ${getStatusStyle(l.status)} active:scale-95 shadow-sm">
+                             <button onclick="window.getAIPitch('${l.id}')" class="text-blue-500 bg-blue-50 w-10 h-10 rounded-full flex items-center justify-center hover:bg-blue-100 active:scale-90 transition shadow-sm border border-blue-50"><i class="fas fa-magic text-sm"></i></button>
+                            <select onchange="window.updateStatus('${l.id}', this.value)" class="text-[10px] font-black px-3 py-2 rounded-xl border-none outline-none cursor-pointer ${getStatusStyle(l.status)} active:scale-95 shadow-sm">
                                 <option value="new" ${l.status === 'new' ? 'selected' : ''}>NEW</option>
                                 <option value="follow-up" ${l.status === 'follow-up' ? 'selected' : ''}>FOLLOW-UP</option>
                                 <option value="converted" ${l.status === 'converted' ? 'selected' : ''}>CONVERTED</option>
@@ -565,8 +596,8 @@
         function renderLists() {
             const container = document.getElementById('lists-container');
             if(!container) return;
-            if (leadLists.length === 0 && initialSyncCount > 0) {
-                container.innerHTML = '<div class="col-span-full py-10 text-center text-gray-400 italic">No lists yet.</div>';
+            if (leadLists.length === 0 && initialSyncDone) {
+                container.innerHTML = '<div class="col-span-full py-10 text-center text-gray-400 italic font-black uppercase text-[10px] tracking-widest">No lists. Upload one.</div>';
                 return;
             }
             container.innerHTML = leadLists.map(list => {
@@ -579,12 +610,12 @@
                                 <h4 class="font-bold text-lg text-blue-600">${list.name}</h4>
                                 <p class="text-xs text-gray-400 uppercase font-black tracking-tighter">${listLeads.length} Candidates</p>
                             </div>
-                            <button onclick="window.deleteList('${list.id}')" class="text-red-300 hover:text-red-500 p-2"><i class="fas fa-trash-alt"></i></button>
+                            <button onclick="window.deleteList('${list.id}')" class="text-red-300 hover:text-red-500 p-2 active:scale-95 transition"><i class="fas fa-trash-alt"></i></button>
                         </div>
                         <div class="space-y-2 border-t pt-4">
-                            <label class="text-[10px] font-black text-gray-400 uppercase ml-1">Team Assignment</label>
+                            <label class="text-[10px] font-black text-gray-400 uppercase ml-1 tracking-widest">Ownership</label>
                             <select onchange="window.bulkAssignList('${list.id}', this.value)" class="w-full p-4 bg-gray-50 rounded-2xl text-sm border-none outline-none font-bold">
-                                <option value="">Assign To Staff...</option>
+                                <option value="">Bulk Assign To...</option>
                                 ${staff.map(s => `<option value="${s.id}" ${assignedId === s.id ? 'selected' : ''}>${s.name}</option>`).join('')}
                             </select>
                         </div>
@@ -596,33 +627,54 @@
         function renderStaff() {
             const container = document.getElementById('staff-container');
             if(!container) return;
-            if (staff.length === 0 && initialSyncCount > 0) {
-                container.innerHTML = '<div class="col-span-full py-10 text-center text-gray-400 italic">No team members added.</div>';
+            if (staff.length === 0 && initialSyncDone) {
+                container.innerHTML = '<div class="col-span-full py-10 text-center text-gray-400 italic font-black uppercase text-[10px] tracking-widest">No staff added.</div>';
                 return;
             }
             container.innerHTML = staff.map(s => {
                 const sl = leads.filter(l => l.assignedTo === s.id);
+                const conv = sl.filter(l=>l.status==='converted').length;
                 return `<div class="bg-white p-6 rounded-3xl border shadow-sm app-card">
                     <div class="flex justify-between items-start mb-4">
-                        <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 font-black text-xl">${s.name.charAt(0)}</div>
-                        <button onclick="window.deleteStaff('${s.id}')" class="text-red-300 hover:text-red-500 p-2"><i class="fas fa-user-minus"></i></button>
+                        <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 font-black text-xl shadow-inner">${s.name.charAt(0)}</div>
+                        <button onclick="window.deleteStaff('${s.id}')" class="text-red-300 hover:text-red-500 p-2 active:scale-95 transition"><i class="fas fa-user-minus"></i></button>
                     </div>
                     <h4 class="font-bold text-lg">${s.name}</h4>
-                    <p class="text-xs text-gray-400 font-mono tracking-widest">ID: ${s.id}</p>
+                    <p class="text-xs text-gray-400 font-mono tracking-widest uppercase text-[9px]">ID: ${s.id}</p>
                     <div class="grid grid-cols-2 gap-2 mt-6 pt-4 border-t">
                         <div class="bg-gray-50 p-3 rounded-2xl text-center"><p class="text-[9px] font-bold text-gray-400 uppercase">Bucket</p><p class="text-lg font-black">${sl.length}</p></div>
-                        <div class="bg-green-50 p-3 rounded-2xl text-center"><p class="text-[9px] font-bold text-green-400 uppercase">Success</p><p class="text-lg font-black text-green-700">${sl.filter(l=>l.status==='converted').length}</p></div>
+                        <div class="bg-green-50 p-3 rounded-2xl text-center"><p class="text-[9px] font-bold text-green-400 uppercase tracking-tighter">Success</p><p class="text-lg font-black text-green-700">${conv}</p></div>
                     </div>
                 </div>`;
             }).join('');
         }
 
-        // --- HANDLERS & HELPERS ---
-        window.debouncedRenderLeads = () => { if(renderTimeout) clearTimeout(renderTimeout); renderTimeout = setTimeout(renderLeads, 100); };
-        window.loadMoreLeads = () => { renderLimit += 50; renderLeads(); };
-        window.setProcessing = (v, text) => { isProcessing = v; document.getElementById('processing-text').innerText = text || "Syncing..."; document.getElementById('processing-overlay').classList.toggle('hidden', !v); };
-        window.notify = (m) => { const t = document.getElementById('toast'); document.getElementById('toast-msg').innerText = m; t.classList.remove('translate-y-20', 'opacity-0'); setTimeout(() => t.classList.add('translate-y-20', 'opacity-0'), 3000); };
+        // --- DASHBOARD UI ---
+        function updateLeaderboard() {
+            const container = document.getElementById('leaderboard');
+            if (!container) return;
+            const stats = staff.map(s => {
+                const count = leads.filter(l => l.assignedTo === s.id && l.status === 'converted').length;
+                return { name: s.name, count };
+            }).sort((a,b) => b.count - a.count);
 
+            container.innerHTML = stats.map((s, idx) => `
+                <div class="flex justify-between items-center bg-white/5 p-4 rounded-2xl border border-white/5 shadow-sm active:bg-white/10 transition mb-2">
+                    <div class="flex items-center gap-3">
+                        <span class="font-black text-gray-600 text-lg">${idx+1}</span>
+                        <span class="font-bold text-gray-200">${s.name}</span>
+                    </div>
+                    <span class="text-xs bg-green-500 text-white px-4 py-1.5 rounded-full font-black shadow-sm">${s.count} ADM</span>
+                </div>
+            `).join('') || '<p class="text-gray-500 text-center py-10 italic">Awaiting results...</p>';
+        }
+
+        // --- HANDLERS ---
+        window.debouncedRenderLeads = () => { if(renderTimeout) clearTimeout(renderTimeout); renderTimeout = setTimeout(renderLeads, 150); };
+        window.loadMoreLeads = () => { renderLimit += 50; renderLeads(); };
+        window.notify = (m, type) => { const t = document.getElementById('toast'); document.getElementById('toast-msg').innerText = m; t.classList.remove('translate-y-20', 'opacity-0'); setTimeout(() => t.classList.add('translate-y-20', 'opacity-0'), 3000); };
+        window.setProcessing = (v, text) => { isProcessing = v; document.getElementById('processing-text').innerText = text || "Processing..."; document.getElementById('processing-overlay').classList.toggle('hidden', !v); };
+        
         window.openLeadModal = (id = null) => {
             editingLeadId = id;
             const hList = document.getElementById('lead-history-list');
@@ -635,7 +687,7 @@
                 document.getElementById('lead-notes').value = '';
                 document.getElementById('lead-followup').value = l.followup || '';
                 hSec.classList.remove('hidden');
-                hList.innerHTML = (l.history || []).map(h => `<div class="bg-gray-50 p-3 rounded-xl border text-[10px]"><span class="font-bold text-gray-400 uppercase">${h.user} • ${h.date}</span><p class="text-gray-700 mt-1">${h.note}</p></div>`).reverse().join('');
+                hList.innerHTML = (l.history || []).map(h => `<div class="bg-gray-50 p-3 rounded-xl border text-[10px] shadow-sm mb-2"><span class="font-bold uppercase text-gray-400">${h.user} • ${h.date}</span><p class="text-gray-700 mt-1">${h.note}</p></div>`).reverse().join('');
             } else {
                 document.querySelectorAll('#lead-modal input, #lead-modal textarea').forEach(i => i.value = '');
                 hSec.classList.add('hidden');
@@ -643,11 +695,23 @@
             document.getElementById('lead-modal').classList.remove('hidden');
         };
 
+        window.saveEmployee = async () => {
+            const n = document.getElementById('staff-name').value.trim(), i = document.getElementById('staff-id').value.trim(), p = document.getElementById('staff-pass').value.trim();
+            if(!n || !i || !p) return notify("All fields required");
+            setProcessing(true, "Creating Member...");
+            try {
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', i), { name: n, password: p, role: 'telecaller' });
+                closeStaffModal();
+                notify("Welcome, " + n);
+            } catch(e) { notify("Sync Failed"); }
+            setProcessing(false);
+        };
+
         window.handleExcelUpload = (e) => {
             const f = e.target.files[0]; if (!f) return;
             const label = prompt("Import Label:", f.name.split('.')[0]); if (!label) return;
             const auto = document.getElementById('auto-assign-toggle').checked;
-            setProcessing(true, "Scanning Excel...");
+            setProcessing(true, "Bulk Import Active...");
             const reader = new FileReader();
             reader.onload = async (ev) => {
                 try {
@@ -664,44 +728,21 @@
                             imp++; if(auto && staff.length > 0) sIdx++;
                         }
                     }
-                    notify(`Success: ${imp} Leads`); showView('lists');
+                    notify(`Imported: ${imp} leads`); showView('lists');
                 } catch (err) { notify("Format Error"); }
                 setProcessing(false);
             };
             reader.readAsArrayBuffer(f);
         };
 
-        window.openWA = (id) => {
-            const l = leads.find(x => x.id === id);
-            if (!l) return;
-            let p = l.phone.replace(/\D/g, '');
-            if (p.length === 10) p = '91' + p; 
-            window.open(`https://wa.me/${p}?text=${encodeURIComponent('Hello ' + (l.name || 'Candidate') + ', this is FutureU Institute. Are you still interested in our program?')}`, '_blank');
-        };
-
-        window.exportCurrentLeads = () => {
-            const ws = XLSX.utils.json_to_sheet(leads.map(l => ({ Name: l.name, Phone: l.phone, Status: l.status.toUpperCase(), Followup: l.followup || '' })));
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Leads");
-            XLSX.writeFile(wb, `FutureU_CRM_Export.xlsx`);
-        };
-
+        // UI HELPERS
         function getStatusStyle(s) { switch(s) { case 'new': return 'bg-blue-100 text-blue-700'; case 'follow-up': return 'bg-orange-100 text-orange-700'; case 'converted': return 'bg-green-100 text-green-700'; case 'rejected': return 'bg-red-100 text-red-700'; default: return 'bg-gray-100 text-gray-500'; } }
         function updateStats() { const f = window.currentUser.role === 'admin' ? leads : leads.filter(l => l.assignedTo === window.currentUser.id); const today = new Date().toISOString().split('T')[0]; document.getElementById('stat-total').innerText = f.length; document.getElementById('stat-converted').innerText = f.filter(x => x.status === 'converted').length; document.getElementById('stat-pending').innerText = f.filter(x => x.followup && x.followup <= today && x.status !== 'converted' && x.status !== 'rejected').length; document.getElementById('stat-rejected').innerText = f.filter(x => x.status === 'rejected').length; }
         function updateChart() { const canvas = document.getElementById('analyticsChart'); if (!canvas) return; const counts = ['new', 'follow-up', 'converted', 'rejected'].map(s => leads.filter(x => x.status === s).length); if (myChart) myChart.destroy(); myChart = new Chart(canvas.getContext('2d'), { type: 'bar', data: { labels: ['New', 'Follow', 'Conv', 'Rej'], datasets: [{ data: counts, backgroundColor: ['#3b82f6', '#f97316', '#10b981', '#ef4444'], borderRadius: 12 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false } } } } }); }
         
-        window.closeLeadModal = () => document.getElementById('lead-modal').classList.add('hidden');
+        window.closeLeadModal = () => { document.getElementById('lead-modal').classList.add('hidden'); editingLeadId = null; };
         window.closeStaffModal = () => document.getElementById('staff-modal').classList.add('hidden');
         window.openStaffModal = () => { document.getElementById('staff-name').value=''; document.getElementById('staff-id').value=''; document.getElementById('staff-pass').value=''; document.getElementById('staff-modal').classList.remove('hidden'); };
-        window.deleteLead = async (id) => { if (confirm("Remove Lead?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', id)); };
-        window.deleteStaff = async (id) => { if (confirm("Remove Staff?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', id)); };
-        window.deleteList = async (id) => { if(confirm("Remove List & Content?")){ setProcessing(true, "Clearing..."); try { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'lead_groups', id)); const del = leads.filter(l => l.listId === id); for(let d of del) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', d.id)); } catch(e){} setProcessing(false); } };
-        window.bulkAssignList = async (listId, staffId) => { if(!staffId) return; setProcessing(true, "Bulk Moving..."); try { const move = leads.filter(l => l.listId === listId); for(let m of move) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', m.id), { assignedTo: staffId, updatedAt: Timestamp.now() }); } catch(e){} setProcessing(false); };
-        window.renameList = async (id) => { const list = leadLists.find(l => l.id === id); if (list) { const n = prompt("Rename list:", list.name); if(n && n !== list.name) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'lead_groups', id), { name: n }); } };
-        window.toggleSelectMode = (f) => { selectMode = f !== undefined ? f : !selectMode; selectedLeads.clear(); document.getElementById('batch-actions').classList.toggle('hidden', !selectMode); renderLeads(); };
-        window.toggleLeadSelection = (id) => { if(selectedLeads.has(id)) selectedLeads.delete(id); else selectedLeads.add(id); document.getElementById('selected-count').innerText = `${selectedLeads.size} Selected`; };
-        window.batchDelete = async () => { if(confirm(`Delete ${selectedLeads.size} leads?`)){ setProcessing(true, "Batch Deleting..."); for(let id of selectedLeads) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', id)); toggleSelectMode(false); setProcessing(false); } };
-        window.batchStatusUpdate = async () => { const s = prompt("Update status to (new, follow-up, converted, rejected):", "follow-up"); if(s && ['new','follow-up','converted','rejected'].includes(s)){ setProcessing(true, "Batch Updating..."); for(let id of selectedLeads) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', id), { status: s, updatedAt: Timestamp.now() }); toggleSelectMode(false); setProcessing(false); } };
         window.copyToClipboard = (t) => { const el = document.createElement('textarea'); el.value = t; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); notify("Copied!"); };
         window.getAIPitch = async (id) => {
             const l = leads.find(x => x.id === id); const modal = document.getElementById('ai-modal'); const content = document.getElementById('ai-content');
@@ -713,6 +754,24 @@
                 });
                 const data = await res.json(); content.innerText = data.candidates?.[0]?.content?.parts?.[0]?.text || "AI Busy.";
             } catch(e) { content.innerText = "Error."; }
+        };
+
+        window.deleteLead = async (id) => { if (confirm("Remove Lead?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', id)); };
+        window.deleteStaff = async (id) => { if (confirm("Remove Staff?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', id)); };
+        window.deleteList = async (id) => { if(confirm("Remove List?")){ setProcessing(true, "Clearing..."); try { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'lead_groups', id)); const del = leads.filter(l => l.listId === id); for(let d of del) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', d.id)); } catch(e){} setProcessing(false); } };
+        window.bulkAssignList = async (listId, staffId) => { if(!staffId) return; setProcessing(true, "Moving..."); try { const move = leads.filter(l => l.listId === listId); for(let m of move) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', m.id), { assignedTo: staffId, updatedAt: Timestamp.now() }); } catch(e){} setProcessing(false); };
+        window.renameList = async (id) => { const list = leadLists.find(l => l.id === id); if (list) { const n = prompt("Rename list:", list.name); if(n && n !== list.name) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'lead_groups', id), { name: n }); } };
+        window.toggleSelectMode = (f) => { selectMode = f !== undefined ? f : !selectMode; selectedLeads.clear(); document.getElementById('batch-actions').classList.toggle('hidden', !selectMode); renderLeads(); };
+        window.toggleLeadSelection = (id) => { if(selectedLeads.has(id)) selectedLeads.delete(id); else selectedLeads.add(id); document.getElementById('selected-count').innerText = `${selectedLeads.size} Selected`; };
+        window.batchDelete = async () => { if(confirm(`Delete ${selectedLeads.size} leads?`)){ setProcessing(true, "Batch Deleting..."); for(let id of selectedLeads) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', id)); toggleSelectMode(false); setProcessing(false); } };
+        window.batchStatusUpdate = async () => { const s = prompt("Update status to (new, follow-up, converted, rejected):", "follow-up"); if(s && ['new','follow-up','converted','rejected'].includes(s)){ setProcessing(true, "Batch Updating..."); for(let id of selectedLeads) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', id), { status: s, updatedAt: Timestamp.now() }); toggleSelectMode(false); setProcessing(false); } };
+
+        window.openWA = (id) => {
+            const l = leads.find(x => x.id === id);
+            if (!l) return;
+            let p = l.phone.replace(/\D/g, '');
+            if (p.length === 10) p = '91' + p; 
+            window.open(`https://wa.me/${p}?text=${encodeURIComponent('Hello ' + (l.name || 'Candidate') + ', this is FutureU Institute. Are you still interested in our professional programs?')}`, '_blank');
         };
 
         initAuth();
