@@ -52,7 +52,7 @@
     <!-- Global Processing Overlay -->
     <div id="processing-overlay" class="fixed inset-0 z-[200] hidden flex flex-col items-center justify-center">
         <div class="loader w-14 h-14 border-4 mb-4"></div>
-        <p id="processing-text" class="font-bold text-blue-600 animate-pulse text-lg text-center">Syncing Cloud...</p>
+        <p id="processing-text" class="font-bold text-blue-600 animate-pulse text-lg text-center">Cloud Syncing...</p>
     </div>
 
     <!-- Auth Overlay -->
@@ -78,204 +78,116 @@
     </div>
 
     <div id="app-container" class="hidden flex h-screen overflow-hidden">
-        
         <!-- Sidebar (Desktop) -->
         <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-white border-r flex flex-col transform -translate-x-full transition-transform md:relative md:translate-x-0">
             <div class="p-6 border-b">
-                <h2 class="text-xl font-bold text-blue-600 flex items-center gap-2">
-                    <i class="fas fa-rocket"></i> FutureU CRM
-                </h2>
+                <h2 class="text-xl font-bold text-blue-600 flex items-center gap-2"><i class="fas fa-rocket"></i> FutureU CRM</h2>
             </div>
             <nav class="flex-1 p-4 space-y-2 overflow-y-auto scroll-container">
-                <button onclick="showView('dashboard')" class="sidebar-btn w-full flex items-center gap-3 p-4 rounded-2xl transition hover:bg-gray-50" id="btn-dashboard">
-                    <i class="fas fa-chart-line"></i> Dashboard
-                </button>
-                <button onclick="showView('leads')" class="sidebar-btn w-full flex items-center gap-3 p-4 rounded-2xl transition hover:bg-gray-50" id="btn-leads">
-                    <i class="fas fa-users"></i> Lead Bucket
-                </button>
-                <button onclick="showView('lists')" class="sidebar-btn w-full flex items-center gap-3 p-4 rounded-2xl transition hover:bg-gray-50 admin-only" id="btn-lists">
-                    <i class="fas fa-layer-group"></i> Lead Lists
-                </button>
-                <button onclick="showView('staff')" class="sidebar-btn w-full flex items-center gap-3 p-4 rounded-2xl transition hover:bg-gray-50 admin-only" id="btn-staff">
-                    <i class="fas fa-user-friends"></i> Staff Portal
-                </button>
+                <button onclick="showView('dashboard')" class="sidebar-btn w-full flex items-center gap-3 p-4 rounded-2xl transition hover:bg-gray-50" id="btn-dashboard"><i class="fas fa-chart-line"></i> Dashboard</button>
+                <button onclick="showView('leads')" class="sidebar-btn w-full flex items-center gap-3 p-4 rounded-2xl transition hover:bg-gray-50" id="btn-leads"><i class="fas fa-users"></i> Lead Bucket</button>
+                <button onclick="showView('lists')" class="sidebar-btn w-full flex items-center gap-3 p-4 rounded-2xl transition hover:bg-gray-50 admin-only" id="btn-lists"><i class="fas fa-layer-group"></i> Lead Lists</button>
+                <button onclick="showView('staff')" class="sidebar-btn w-full flex items-center gap-3 p-4 rounded-2xl transition hover:bg-gray-50 admin-only" id="btn-staff"><i class="fas fa-user-friends"></i> Staff Portal</button>
             </nav>
             <div class="p-4 border-t">
                 <div class="flex items-center gap-3 mb-4 p-3 bg-gray-50 rounded-2xl">
                     <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold" id="user-avatar">?</div>
-                    <div class="truncate">
-                        <p class="text-sm font-bold truncate" id="user-name">User</p>
-                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider" id="user-role-label">Role</p>
-                    </div>
+                    <div class="truncate"><p class="text-sm font-bold truncate" id="user-name">User</p><p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider" id="user-role-label">Role</p></div>
                 </div>
-                <button onclick="logout()" class="w-full flex items-center gap-3 p-3 text-red-500 rounded-xl hover:bg-red-50 transition font-medium">
-                    <i class="fas fa-power-off"></i> Logout
-                </button>
+                <button onclick="logout()" class="w-full flex items-center gap-3 p-3 text-red-500 rounded-xl hover:bg-red-50 transition font-medium"><i class="fas fa-power-off"></i> Logout</button>
             </div>
         </aside>
 
-        <!-- Main Content Area -->
+        <!-- Main Area -->
         <main class="flex-1 overflow-y-auto bg-gray-50 pb-24 md:pb-8 scroll-container relative safe-area-pb">
             <div class="p-4 md:p-8 max-w-6xl mx-auto space-y-6">
                 
-                <!-- Dashboard View -->
+                <!-- Performance View -->
                 <section id="view-dashboard" class="view space-y-6 fade-in">
                     <div class="flex flex-col md:flex-row justify-between md:items-center">
                         <h1 class="text-2xl font-bold">Performance</h1>
                         <p class="text-xs font-bold text-blue-500 uppercase tracking-widest bg-blue-50 px-3 py-1 rounded-full">Cloud Active</p>
                     </div>
-
                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 text-center">
-                        <div class="bg-white p-6 rounded-[1.5rem] border shadow-sm text-center">
-                            <p class="text-gray-400 text-[10px] font-bold uppercase tracking-tighter">Total Leads</p>
-                            <h3 class="text-2xl font-bold mt-1" id="stat-total">0</h3>
-                        </div>
-                        <div class="bg-green-600 p-6 rounded-[1.5rem] text-white shadow-lg text-center">
-                            <p class="text-green-100 text-[10px] font-bold uppercase tracking-tighter">Converted</p>
-                            <h3 class="text-2xl font-bold mt-1" id="stat-converted">0</h3>
-                        </div>
-                        <div class="bg-white p-6 rounded-[1.5rem] border shadow-sm text-orange-500 text-center">
-                            <p class="text-gray-400 text-[10px] font-bold uppercase tracking-tighter">Follow Dues</p>
-                            <h3 class="text-2xl font-bold mt-1" id="stat-pending">0</h3>
-                        </div>
-                        <div class="bg-white p-6 rounded-[1.5rem] border shadow-sm text-red-500 text-center">
-                            <p class="text-gray-400 text-[10px] font-bold uppercase tracking-tighter">Rejected</p>
-                            <h3 class="text-2xl font-bold mt-1" id="stat-rejected">0</h3>
-                        </div>
+                        <div class="bg-white p-6 rounded-[1.5rem] border shadow-sm"><p class="text-gray-400 text-[10px] font-bold uppercase tracking-tighter">Leads</p><h3 class="text-2xl font-bold mt-1" id="stat-total">0</h3></div>
+                        <div class="bg-green-600 p-6 rounded-[1.5rem] text-white shadow-lg"><p class="text-green-100 text-[10px] font-bold uppercase tracking-tighter">Converted</p><h3 class="text-2xl font-bold mt-1" id="stat-converted">0</h3></div>
+                        <div class="bg-white p-6 rounded-[1.5rem] border shadow-sm text-orange-500"><p class="text-gray-400 text-[10px] font-bold uppercase tracking-tighter">Dues</p><h3 class="text-2xl font-bold mt-1" id="stat-pending">0</h3></div>
+                        <div class="bg-white p-6 rounded-[1.5rem] border shadow-sm text-red-500"><p class="text-gray-400 text-[10px] font-bold uppercase tracking-tighter">Rejected</p><h3 class="text-2xl font-bold mt-1" id="stat-rejected">0</h3></div>
                     </div>
-
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <div class="lg:col-span-2 bg-white p-6 rounded-[2rem] border shadow-sm">
-                            <h4 class="font-bold mb-4 text-gray-700">Funnel Analysis</h4>
-                            <div class="h-64 relative"><canvas id="analyticsChart"></canvas></div>
-                        </div>
-                        <div class="bg-gray-900 p-6 rounded-[2rem] text-white flex flex-col min-h-[300px]">
-                            <h4 class="font-bold mb-4 flex items-center gap-2 text-yellow-400"><i class="fas fa-crown"></i> Team Rankings</h4>
-                            <div id="leaderboard" class="space-y-4 overflow-y-auto flex-1 text-sm scroll-container">
-                                <p class="text-gray-500 text-center py-10 italic font-bold text-xs uppercase tracking-widest">Syncing leaderboard...</p>
-                            </div>
-                        </div>
+                        <div class="lg:col-span-2 bg-white p-6 rounded-[2rem] border shadow-sm"><h4 class="font-bold mb-4 text-gray-700">Analytics</h4><div class="h-64 relative"><canvas id="analyticsChart"></canvas></div></div>
+                        <div class="bg-gray-900 p-6 rounded-[2rem] text-white flex flex-col min-h-[300px]"><h4 class="font-bold mb-4 flex items-center gap-2 text-yellow-400"><i class="fas fa-crown"></i> Rankings</h4><div id="leaderboard" class="space-y-4 overflow-y-auto flex-1 text-sm scroll-container"></div></div>
                     </div>
                 </section>
 
-                <!-- Lead Bucket View -->
+                <!-- Bucket View -->
                 <section id="view-leads" class="view hidden space-y-4 fade-in">
                     <div class="flex justify-between items-center">
                         <h1 class="text-2xl font-bold">Bucket</h1>
                         <div class="flex gap-2">
-                             <button onclick="toggleSelectMode()" id="select-mode-btn" class="bg-gray-100 text-gray-600 px-4 py-3 rounded-2xl font-bold active:scale-95 transition cursor-pointer">
-                                <i class="fas fa-check-square"></i>
-                            </button>
-                             <button onclick="exportCurrentLeads()" class="bg-white border border-gray-200 text-gray-700 px-4 py-3 rounded-2xl font-bold active:scale-95 transition cursor-pointer">
-                                <i class="fas fa-download"></i>
-                            </button>
-                            <button onclick="openLeadModal()" class="bg-blue-600 text-white px-6 py-3 rounded-2xl font-bold shadow-lg active:scale-95 transition cursor-pointer">
-                                <i class="fas fa-plus"></i>
-                            </button>
+                             <button onclick="toggleSelectMode()" id="select-mode-btn" class="bg-gray-100 text-gray-600 px-4 py-3 rounded-2xl font-bold active:scale-95 transition"><i class="fas fa-check-square"></i></button>
+                             <button onclick="exportCurrentLeads()" class="bg-white border border-gray-200 text-gray-700 px-4 py-3 rounded-2xl font-bold active:scale-95 transition"><i class="fas fa-download"></i></button>
+                            <button onclick="openLeadModal()" class="bg-blue-600 text-white px-6 py-3 rounded-2xl font-bold shadow-lg active:scale-95 transition"><i class="fas fa-plus"></i></button>
                         </div>
                     </div>
-
                     <div class="bg-white p-3 rounded-2xl border flex flex-col gap-2 shadow-sm">
-                        <div class="relative">
-                            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                            <input type="text" id="search-input" oninput="debouncedRenderLeads()" class="w-full pl-12 pr-4 py-4 bg-gray-50 rounded-xl outline-none border-none text-base" placeholder="Search phone or name...">
-                        </div>
+                        <input type="text" id="search-input" oninput="debouncedRenderLeads()" class="w-full px-4 py-4 bg-gray-50 rounded-xl outline-none border-none text-base" placeholder="Search contact...">
                         <div class="grid grid-cols-2 gap-2">
-                            <select id="filter-status" onchange="debouncedRenderLeads()" class="p-4 bg-gray-50 rounded-xl font-bold text-sm outline-none border-none cursor-pointer">
-                                <option value="all">All Status</option>
-                                <option value="new">🆕 New</option>
-                                <option value="follow-up">⏳ Follow-up</option>
-                                <option value="converted">✅ Converted</option>
-                                <option value="rejected">❌ Rejected</option>
+                            <select id="filter-status" onchange="debouncedRenderLeads()" class="p-4 bg-gray-50 rounded-xl font-bold text-sm outline-none border-none">
+                                <option value="all">All Status</option><option value="new">🆕 New</option><option value="follow-up">⏳ Follow-up</option><option value="converted">✅ Converted</option><option value="rejected">❌ Rejected</option>
                             </select>
-                            <select id="sort-order" onchange="debouncedRenderLeads()" class="p-4 bg-gray-50 rounded-xl font-bold text-sm outline-none border-none cursor-pointer">
-                                <option value="newest">Latest First</option>
-                                <option value="name">A-Z Name</option>
-                                <option value="followup">Follow-up Due</option>
+                            <select id="sort-order" onchange="debouncedRenderLeads()" class="p-4 bg-gray-50 rounded-xl font-bold text-sm outline-none border-none">
+                                <option value="newest">Latest</option><option value="name">A-Z</option><option value="followup">Due First</option>
                             </select>
                         </div>
-                        <select id="filter-list" onchange="debouncedRenderLeads()" class="p-4 bg-gray-50 rounded-xl font-bold text-sm outline-none border-none w-full cursor-pointer">
-                            <option value="all">All Marketing Lists</option>
-                        </select>
                     </div>
-
-                    <!-- Batch Actions -->
                     <div id="batch-actions" class="hidden bg-blue-600 p-4 rounded-2xl flex justify-between items-center text-white shadow-xl">
                         <span id="selected-count" class="font-bold text-sm">0 Selected</span>
                         <div class="flex gap-2">
-                            <button onclick="batchStatusUpdate()" class="bg-white text-blue-600 px-4 py-2 rounded-xl text-[10px] font-bold uppercase active:scale-95 transition">Update</button>
-                            <button onclick="batchDelete()" class="bg-red-500 text-white px-4 py-2 rounded-xl text-[10px] font-bold uppercase active:scale-95 transition">Delete</button>
+                            <button onclick="batchStatusUpdate()" class="bg-white text-blue-600 px-4 py-2 rounded-xl text-[10px] font-bold uppercase active:scale-95 transition">Status</button>
+                            <button onclick="batchDelete()" class="bg-red-500 text-white px-4 py-2 rounded-xl text-[10px] font-bold uppercase active:scale-95 transition">Del</button>
                             <button onclick="toggleSelectMode(false)" class="text-white px-2"><i class="fas fa-times"></i></button>
                         </div>
                     </div>
-
-                    <div id="leads-container" class="space-y-4 min-h-[200px]">
-                        <div class="py-20 text-center"><div class="loader mx-auto"></div></div>
-                    </div>
-                    <div id="load-more-btn" class="hidden text-center py-6">
-                        <button onclick="loadMoreLeads()" class="bg-gray-900 text-white px-10 py-4 rounded-2xl font-bold active:scale-95 transition w-full md:w-auto">Load More Leads</button>
-                    </div>
+                    <div id="leads-container" class="space-y-4"></div>
+                    <div id="load-more-btn" class="hidden text-center py-6"><button onclick="loadMoreLeads()" class="bg-gray-900 text-white px-10 py-4 rounded-2xl font-bold active:scale-95 transition">Load More</button></div>
                 </section>
 
-                <!-- Lead Lists View -->
+                <!-- Marketing Lists -->
                 <section id="view-lists" class="view hidden space-y-6 fade-in">
                     <div class="flex justify-between items-center">
-                        <h1 class="text-2xl font-bold">Marketing Lists</h1>
-                        <button onclick="document.getElementById('excel-input').click()" class="bg-blue-600 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 active:scale-95 transition cursor-pointer">
-                            <i class="fas fa-upload"></i> Upload List
-                        </button>
+                        <h1 class="text-2xl font-bold">Lists</h1>
+                        <button onclick="document.getElementById('excel-input').click()" class="bg-blue-600 text-white px-6 py-3 rounded-2xl font-bold shadow-lg active:scale-95 transition"><i class="fas fa-upload"></i> Upload</button>
                         <input type="file" id="excel-input" class="hidden" accept=".xlsx,.xls,.csv" onchange="handleExcelUpload(event)">
                     </div>
-                    <div id="lists-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 min-h-[100px]">
-                        <div class="col-span-full py-10 text-center"><div class="loader mx-auto"></div></div>
-                    </div>
+                    <div id="lists-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
                 </section>
 
-                <!-- Team Portal View -->
+                <!-- Team Portal -->
                 <section id="view-staff" class="view hidden space-y-6 fade-in">
                     <div class="flex justify-between items-center">
-                        <h1 class="text-2xl font-bold">Team Portal</h1>
-                        <button onclick="openStaffModal()" class="bg-black text-white px-6 py-3 rounded-2xl font-bold active:scale-95 transition cursor-pointer">
-                            <i class="fas fa-user-plus"></i> Add Employee
-                        </button>
+                        <h1 class="text-2xl font-bold">Team</h1>
+                        <button onclick="openStaffModal()" class="bg-black text-white px-6 py-3 rounded-2xl font-bold shadow-lg active:scale-95 transition">Add Member</button>
                     </div>
-                    <div id="staff-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 min-h-[100px]">
-                        <div class="col-span-full py-10 text-center"><div class="loader mx-auto"></div></div>
-                    </div>
+                    <div id="staff-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
                 </section>
-
             </div>
         </main>
 
-        <!-- Bottom Mobile Nav -->
+        <!-- Bottom Nav -->
         <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around p-4 z-50 shadow-2xl">
-            <button onclick="showView('dashboard')" class="bottom-nav-btn flex-1 flex flex-col items-center gap-1 text-gray-400 active:bg-gray-50 rounded-xl py-2" id="m-btn-dashboard">
-                <i class="fas fa-th-large text-xl"></i>
-                <span class="text-[10px] font-bold uppercase tracking-tighter">Dashboard</span>
-            </button>
-            <button onclick="showView('leads')" class="bottom-nav-btn flex-1 flex flex-col items-center gap-1 text-gray-400 active:bg-gray-50 rounded-xl py-2" id="m-btn-leads">
-                <i class="fas fa-headset text-xl"></i>
-                <span class="text-[10px] font-bold uppercase tracking-tighter">Bucket</span>
-            </button>
-            <button onclick="showView('lists')" class="bottom-nav-btn flex-1 flex flex-col items-center gap-1 text-gray-400 admin-only active:bg-gray-50 rounded-xl py-2" id="m-btn-lists">
-                <i class="fas fa-file-invoice text-xl"></i>
-                <span class="text-[10px] font-bold uppercase tracking-tighter">Lists</span>
-            </button>
-            <button onclick="showView('staff')" class="bottom-nav-btn flex-1 flex flex-col items-center gap-1 text-gray-400 admin-only active:bg-gray-50 rounded-xl py-2" id="m-btn-staff">
-                <i class="fas fa-users text-xl"></i>
-                <span class="text-[10px] font-bold uppercase tracking-tighter">Team</span>
-            </button>
+            <button onclick="showView('dashboard')" class="bottom-nav-btn flex-1 flex flex-col items-center gap-1 text-gray-400 active:bg-gray-50 rounded-xl py-2" id="m-btn-dashboard"><i class="fas fa-th-large text-xl"></i><span class="text-[10px] font-bold uppercase">Stats</span></button>
+            <button onclick="showView('leads')" class="bottom-nav-btn flex-1 flex flex-col items-center gap-1 text-gray-400 active:bg-gray-50 rounded-xl py-2" id="m-btn-leads"><i class="fas fa-headset text-xl"></i><span class="text-[10px] font-bold uppercase">Bucket</span></button>
+            <button onclick="showView('lists')" class="bottom-nav-btn flex-1 flex flex-col items-center gap-1 text-gray-400 admin-only active:bg-gray-50 rounded-xl py-2" id="m-btn-lists"><i class="fas fa-file-invoice text-xl"></i><span class="text-[10px] font-bold uppercase">Lists</span></button>
+            <button onclick="showView('staff')" class="bottom-nav-btn flex-1 flex flex-col items-center gap-1 text-gray-400 admin-only active:bg-gray-50 rounded-xl py-2" id="m-btn-staff"><i class="fas fa-users text-xl"></i><span class="text-[10px] font-bold uppercase">Team</span></button>
         </nav>
     </div>
 
-    <!-- AI Modal -->
+    <!-- AI Pitch Modal -->
     <div id="ai-modal" class="fixed inset-0 z-[120] hidden flex items-center justify-center p-4 modal-bg">
         <div class="bg-white rounded-[2rem] w-full max-w-lg shadow-2xl overflow-hidden p-8 space-y-6">
-            <div class="flex justify-between items-center">
-                <h3 class="text-xl font-bold text-blue-600 flex items-center gap-2"><i class="fas fa-magic"></i> FutureU AI Pitch</h3>
-                <button onclick="document.getElementById('ai-modal').classList.add('hidden')" class="text-gray-400 p-2 active:scale-95 transition"><i class="fas fa-times text-lg"></i></button>
-            </div>
-            <div id="ai-content" class="bg-blue-50 p-6 rounded-2xl text-blue-900 leading-relaxed italic border border-blue-100 min-h-[100px] flex items-center justify-center text-sm text-center"></div>
+            <div class="flex justify-between items-center"><h3 class="text-xl font-bold text-blue-600">FutureU AI Pitch</h3><button onclick="document.getElementById('ai-modal').classList.add('hidden')" class="text-gray-400"><i class="fas fa-times text-lg"></i></button></div>
+            <div id="ai-content" class="bg-blue-50 p-6 rounded-2xl text-blue-900 min-h-[100px] flex items-center justify-center text-sm italic"></div>
             <button onclick="copyToClipboard(document.getElementById('ai-content').innerText)" class="w-full py-5 bg-blue-600 text-white rounded-2xl font-bold shadow-lg active:scale-95 transition">Copy script</button>
         </div>
     </div>
@@ -283,21 +195,15 @@
     <!-- Lead Profile Modal -->
     <div id="lead-modal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 modal-bg">
         <div class="bg-white rounded-[2.5rem] w-full max-w-lg shadow-2xl overflow-hidden flex flex-col h-[90vh]">
-            <div class="p-6 border-b flex justify-between items-center bg-gray-100">
-                <h3 class="font-bold text-lg" id="lead-modal-title">Lead Profile</h3>
-                <button onclick="closeLeadModal()" class="w-10 h-10 flex items-center justify-center rounded-full bg-white shadow-sm active:scale-95 transition"><i class="fas fa-times text-gray-400"></i></button>
-            </div>
+            <div class="p-6 border-b flex justify-between items-center bg-gray-100"><h3 class="font-bold text-lg">Candidate Profile</h3><button onclick="closeLeadModal()" class="w-10 h-10 flex items-center justify-center rounded-full bg-white shadow-sm active:scale-95 transition"><i class="fas fa-times text-gray-400"></i></button></div>
             <div class="flex-1 overflow-y-auto p-6 space-y-6 scroll-container">
                 <div class="space-y-4">
-                    <div><label class="text-[10px] font-bold text-gray-400 uppercase ml-2 mb-1 block tracking-widest">Candidate Name</label><input type="text" id="lead-name" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border text-base"></div>
-                    <div><label class="text-[10px] font-bold text-gray-400 uppercase ml-2 mb-1 block tracking-widest">Phone</label><input type="tel" id="lead-phone" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border text-base"></div>
-                    <div><label class="text-[10px] font-bold text-gray-400 uppercase ml-2 mb-1 block tracking-widest">Follow-up Date</label><input type="date" id="lead-followup" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border text-base"></div>
-                    <div><label class="text-[10px] font-bold text-gray-400 uppercase ml-2 mb-1 block tracking-widest">Current Notes</label><textarea id="lead-notes" rows="4" placeholder="Update candidate response..." class="w-full p-4 bg-gray-50 rounded-2xl outline-none border text-base"></textarea></div>
+                    <div><label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Name</label><input type="text" id="lead-name" class="w-full p-4 bg-gray-50 rounded-2xl border text-base"></div>
+                    <div><label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Phone</label><input type="tel" id="lead-phone" class="w-full p-4 bg-gray-50 rounded-2xl border text-base"></div>
+                    <div><label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Follow-up</label><input type="date" id="lead-followup" class="w-full p-4 bg-gray-50 rounded-2xl border text-base"></div>
+                    <div><label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Recent Update</label><textarea id="lead-notes" rows="4" class="w-full p-4 bg-gray-50 rounded-2xl border text-base"></textarea></div>
                 </div>
-                <div id="lead-history-section" class="hidden space-y-4 border-t pt-6">
-                    <h4 class="text-xs font-black text-gray-400 uppercase tracking-widest">Activity Timeline</h4>
-                    <div id="lead-history-list" class="space-y-3"></div>
-                </div>
+                <div id="lead-history-section" class="hidden space-y-4 border-t pt-6"><h4 class="text-xs font-black text-gray-400 uppercase tracking-widest">Timeline</h4><div id="lead-history-list" class="space-y-3"></div></div>
             </div>
             <div class="p-6 bg-gray-50"><button onclick="saveLead()" class="w-full py-5 bg-blue-600 text-white rounded-2xl font-bold shadow-lg active:scale-95 transition">Sync to Cloud</button></div>
         </div>
@@ -306,16 +212,13 @@
     <!-- Staff Modal -->
     <div id="staff-modal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 modal-bg">
         <div class="bg-white rounded-[2rem] w-full max-w-md shadow-2xl p-8 space-y-6">
-            <h3 class="text-xl font-bold text-center">Add Team Member</h3>
+            <h3 class="text-xl font-bold text-center">New Team Member</h3>
             <div class="space-y-4">
                 <input type="text" id="staff-name" placeholder="Full Name" class="w-full p-4 bg-gray-50 rounded-2xl border outline-none text-base">
                 <input type="text" id="staff-id" placeholder="Login ID" class="w-full p-4 bg-gray-50 rounded-2xl border outline-none text-base">
                 <input type="text" id="staff-pass" placeholder="Password" class="w-full p-4 bg-gray-50 rounded-2xl border outline-none text-base">
             </div>
-            <div class="flex gap-3">
-                <button onclick="closeStaffModal()" class="flex-1 py-4 text-gray-400 font-bold active:scale-95 transition">Cancel</button>
-                <button onclick="saveEmployee()" class="flex-1 py-4 bg-black text-white rounded-2xl font-bold active:scale-95 transition">Create</button>
-            </div>
+            <div class="flex gap-3"><button onclick="closeStaffModal()" class="flex-1 py-4 text-gray-400 font-bold active:scale-95 transition">Cancel</button><button onclick="saveEmployee()" class="flex-1 py-4 bg-black text-white rounded-2xl font-bold active:scale-95 transition">Register</button></div>
         </div>
     </div>
 
@@ -339,7 +242,6 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // State
         let user = null;
         let leads = [];
         let staff = [];
@@ -351,10 +253,9 @@
         let selectedLeads = new Set();
         let renderLimit = 50;
         let renderTimeout = null;
-        let initialSyncCount = 0;
 
-        // --- AUTH ---
-        const initAuth = async () => {
+        // --- CORE CLOUD HANDSHAKE ---
+        const initCloudSession = async () => {
             if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                 await signInWithCustomToken(auth, __initial_auth_token);
             } else {
@@ -367,41 +268,12 @@
             const session = localStorage.getItem('crm_session_v3');
             if (session && u) {
                 window.currentUser = JSON.parse(session);
-                setupApp();
+                startDataListeners();
             }
         });
 
-        window.handleLogin = async () => {
-            const id = document.getElementById('login-id').value.trim();
-            const pass = document.getElementById('login-pass').value.trim();
-            if (!id || !pass) return;
-
-            if (id === 'admin_01' && pass === 'admin@123') {
-                proceedLogin({ id, name: 'Principal Admin', role: 'admin' });
-                return;
-            }
-
-            try {
-                const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', id);
-                const userSnap = await getDoc(userRef);
-                if (userSnap.exists() && userSnap.data().password === pass) {
-                    proceedLogin({ id, name: userSnap.data().name, role: 'telecaller' });
-                } else {
-                    notify("Invalid ID or Password", "error");
-                }
-            } catch (err) { notify("Sync Connection Error"); }
-        };
-
-        function proceedLogin(userData) {
-            window.currentUser = userData;
-            localStorage.setItem('crm_session_v3', JSON.stringify(userData));
-            if (!user) initAuth(); else setupApp();
-        }
-
-        window.logout = () => { localStorage.removeItem('crm_session_v3'); location.reload(); };
-
-        // --- CLOUD SYNC ENGINE ---
-        function setupApp() {
+        // --- DATA ENGINE ---
+        async function startDataListeners() {
             if (!user) return;
             document.getElementById('auth-overlay').classList.add('hidden');
             document.getElementById('app-container').classList.remove('hidden');
@@ -410,29 +282,27 @@
             document.getElementById('user-avatar').innerText = window.currentUser.name.charAt(0);
 
             if (window.currentUser.role !== 'admin') document.querySelectorAll('.admin-only').forEach(e => e.remove());
-            
-            // Centralized Snapshot Listeners
+
+            // Independent Non-Blocking Listeners
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'leads'), (snap) => {
                 leads = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                initialSyncCount++;
-                refreshUI();
+                refreshVisibleUI();
             });
 
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'users'), (snap) => {
                 staff = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                refreshUI();
+                refreshVisibleUI();
             });
 
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'lead_groups'), (snap) => {
                 leadLists = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                refreshUI();
+                refreshVisibleUI();
             });
 
             showView('dashboard');
         }
 
-        function refreshUI() {
-            // Logic targets visible components without blocking data flow
+        function refreshVisibleUI() {
             updateStats();
             updateChart();
             updateLeaderboard();
@@ -443,11 +313,9 @@
         }
 
         window.showView = (name) => {
-            const views = document.querySelectorAll('.view');
-            views.forEach(v => v.classList.add('hidden'));
-            
-            const targetView = document.getElementById('view-' + name);
-            if (targetView) targetView.classList.remove('hidden');
+            document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
+            const target = document.getElementById('view-' + name);
+            if (target) target.classList.remove('hidden');
             
             document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('sidebar-active'));
             const dBtn = document.getElementById('btn-' + name);
@@ -457,40 +325,53 @@
             const mBtn = document.getElementById('m-btn-' + name);
             if(mBtn) mBtn.classList.add('bottom-nav-active');
 
-            refreshUI();
+            refreshVisibleUI();
         };
 
         // --- ACTIONS ---
+        window.handleLogin = async () => {
+            const id = document.getElementById('login-id').value.trim();
+            const pass = document.getElementById('login-pass').value.trim();
+            if (!id || !pass) return;
+            if (id === 'admin_01' && pass === 'admin@123') { proceedLogin({ id, name: 'Principal Admin', role: 'admin' }); return; }
+            try {
+                const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', id);
+                const userSnap = await getDoc(userRef);
+                if (userSnap.exists() && userSnap.data().password === pass) {
+                    proceedLogin({ id, name: userSnap.data().name, role: 'telecaller' });
+                } else { notify("Incorrect Details", "error"); }
+            } catch (err) { notify("Auth Sync Error"); }
+        };
+
+        function proceedLogin(userData) {
+            window.currentUser = userData;
+            localStorage.setItem('crm_session_v3', JSON.stringify(userData));
+            if (!user) initCloudSession(); else startDataListeners();
+        }
+
+        window.logout = () => { localStorage.removeItem('crm_session_v3'); location.reload(); };
+
         window.updateStatus = async (id, status) => {
             notify(`${status.toUpperCase()}`);
             try {
                 const leadRef = doc(db, 'artifacts', appId, 'public', 'data', 'leads', id);
-                await updateDoc(leadRef, { 
-                    status: status, 
-                    updatedAt: Timestamp.now() 
-                });
-            } catch (err) { notify("Cloud Update Failed", "error"); }
+                await updateDoc(leadRef, { status: status, updatedAt: Timestamp.now() });
+            } catch (err) { notify("Sync Failed"); }
         };
 
         window.shareLead = async (id) => {
             const l = leads.find(x => x.id === id);
             if (!l) return;
-            const text = `FutureU Info:\nName: ${l.name}\nPhone: ${l.phone}\nStatus: ${l.status.toUpperCase()}\nNotes: ${l.notes || 'N/A'}`;
-            
+            const text = `Lead: ${l.name}\nPhone: ${l.phone}\nNotes: ${l.notes || 'N/A'}`;
             if (navigator.share) {
-                try {
-                    await navigator.share({ title: 'Candidate Profile', text: text });
-                } catch (e) { copyText(text); }
+                try { await navigator.share({ title: 'Candidate Info', text }); } catch (e) { copyText(text); }
             } else { copyText(text); }
         };
 
         function copyText(text) {
             const el = document.createElement('textarea');
-            el.value = text;
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
-            document.body.removeChild(el);
+            el.value = text; document.body.appendChild(el); el.select();
+            document.execCommand('copy'); document.body.removeChild(el);
             notify("Details Copied");
         }
 
@@ -499,20 +380,13 @@
             const p = document.getElementById('lead-phone').value.trim();
             const f = document.getElementById('lead-followup').value;
             const nt = document.getElementById('lead-notes').value.trim();
-            if (!n || !p) return notify("Missing Info");
-            
+            if (!n || !p) return notify("Missing Critical Info");
             try {
                 const data = { name: n, phone: p, followup: f, notes: nt, updatedAt: Timestamp.now() };
-                const hist = { date: new Date().toLocaleString(), user: window.currentUser.name, note: nt || "Profile Updated" };
-
-                if (editingLeadId) {
-                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', editingLeadId), { ...data, history: arrayUnion(hist) });
-                } else {
-                    data.status = 'new'; data.assignedTo = window.currentUser.id; data.createdAt = Timestamp.now(); data.history = [hist];
-                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'leads'), data);
-                }
-                closeLeadModal();
-                notify("Cloud Updated");
+                const hist = { date: new Date().toLocaleString(), user: window.currentUser.name, note: nt || "Update" };
+                if (editingLeadId) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', editingLeadId), { ...data, history: arrayUnion(hist) });
+                else { data.status = 'new'; data.assignedTo = window.currentUser.id; data.createdAt = Timestamp.now(); data.history = [hist]; await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'leads'), data); }
+                closeLeadModal(); notify("Synced");
             } catch (e) { notify("Sync Failed"); }
         };
 
@@ -520,53 +394,45 @@
         window.renderLeads = () => {
             const container = document.getElementById('leads-container');
             if (!container) return;
+            const statusF = document.getElementById('filter-status').value;
+            const listF = document.getElementById('filter-list').value;
+            const sortO = document.getElementById('sort-order').value;
+            const query = (document.getElementById('search-input')?.value || "").toLowerCase();
 
-            const statusFilter = document.getElementById('filter-status').value;
-            const listFilter = document.getElementById('filter-list').value;
-            const sortOrder = document.getElementById('sort-order').value;
-            const searchQuery = (document.getElementById('search-input')?.value || "").toLowerCase();
+            let filtered = leads.filter(l => {
+                const roleMatch = window.currentUser.role === 'admin' || l.assignedTo === window.currentUser.id;
+                const statusMatch = statusF === 'all' || l.status === statusF;
+                const listMatch = listF === 'all' || l.listId === listF;
+                const searchMatch = !query || (l.name || "").toLowerCase().includes(query) || (l.phone || "").includes(query);
+                return roleMatch && statusMatch && listMatch && searchMatch;
+            });
 
-            let filtered = [...leads];
-            if (window.currentUser.role !== 'admin') filtered = filtered.filter(l => l.assignedTo === window.currentUser.id);
-            if (statusFilter !== 'all') filtered = filtered.filter(l => l.status === statusFilter);
-            if (listFilter !== 'all') filtered = filtered.filter(l => l.listId === listFilter);
-            if (searchQuery) filtered = filtered.filter(l => (l.name && l.name.toLowerCase().includes(searchQuery)) || (l.phone && l.phone.includes(searchQuery)));
-
-            if (sortOrder === 'name') filtered.sort((a,b) => (a.name || "").localeCompare(b.name || ""));
-            else if (sortOrder === 'followup') filtered.sort((a,b) => (new Date(a.followup || "9999-12-31")) - (new Date(b.followup || "9999-12-31")));
+            if (sortO === 'name') filtered.sort((a,b) => (a.name || "").localeCompare(b.name || ""));
+            else if (sortO === 'followup') filtered.sort((a,b) => (new Date(a.followup || "9999-12-31")) - (new Date(b.followup || "9999-12-31")));
             else filtered.sort((a,b) => (b.updatedAt?.seconds || 0) - (a.updatedAt?.seconds || 0));
 
-            const displaySubset = filtered.slice(0, renderLimit);
-            const today = new Date().toISOString().split('T')[0];
+            const display = filtered.slice(0, renderLimit);
+            if (display.length === 0) { container.innerHTML = '<p class="py-20 text-center text-gray-400 italic">No candidates found.</p>'; return; }
 
-            if (displaySubset.length === 0 && initialSyncCount > 0) {
-                container.innerHTML = '<div class="py-20 text-center text-gray-400 italic">No candidates found.</div>';
-                return;
-            }
-
-            container.innerHTML = displaySubset.map(l => {
-                const isDue = l.followup && l.followup <= today && l.status !== 'converted' && l.status !== 'rejected';
-                const listName = leadLists.find(gl => gl.id === l.listId)?.name || 'Manual Entry';
+            container.innerHTML = display.map(l => {
+                const isDue = l.followup && l.followup <= new Date().toISOString().split('T')[0] && l.status !== 'converted' && l.status !== 'rejected';
                 return `
                 <div class="bg-white p-5 app-card border shadow-sm space-y-4 fade-in ${isDue ? 'border-orange-200 bg-orange-50/20' : ''}">
                     <div class="flex justify-between items-start">
                         <div class="flex items-start gap-3 flex-1 overflow-hidden" onclick="window.openLeadModal('${l.id}')">
                             ${selectMode ? `<input type="checkbox" onchange="window.toggleLeadSelection('${l.id}')" ${selectedLeads.has(l.id) ? 'checked' : ''} class="w-6 h-6 mt-1">` : ''}
                             <div class="flex-1 truncate">
-                                <h3 class="text-lg font-black truncate active:text-blue-600 transition flex items-center gap-2">
-                                    ${l.name || '<span class="font-normal italic">New Candidate</span>'}
-                                    ${isDue ? '<span class="w-2 h-2 bg-orange-500 rounded-full animate-ping"></span>' : ''}
-                                </h3>
+                                <h3 class="text-lg font-black truncate active:text-blue-600 flex items-center gap-2">${l.name || 'Candidate'} ${isDue ? '<span class="w-2 h-2 bg-orange-500 rounded-full"></span>' : ''}</h3>
                                 <p class="text-sm font-mono text-gray-500 mt-0.5">${l.phone}</p>
                                 <div class="flex flex-wrap gap-1 mt-2">
-                                    <span class="text-[8px] bg-blue-100 text-blue-600 px-2 py-0.5 rounded font-black uppercase tracking-wider">${listName}</span>
-                                    ${l.followup ? `<span class="text-[8px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded font-bold uppercase tracking-wider">📅 ${l.followup}</span>` : ''}
+                                    <span class="text-[8px] bg-blue-100 text-blue-600 px-2 py-0.5 rounded font-black uppercase">Source: ${leadLists.find(gl=>gl.id===l.listId)?.name || 'Direct'}</span>
+                                    ${l.followup ? `<span class="text-[8px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded font-bold uppercase">📅 ${l.followup}</span>` : ''}
                                 </div>
                             </div>
                         </div>
                         <div class="flex flex-col items-end gap-2">
-                             <button onclick="window.getAIPitch('${l.id}')" class="text-blue-500 bg-blue-50 w-10 h-10 rounded-full flex items-center justify-center hover:bg-blue-100 active:scale-90 transition border border-blue-50"><i class="fas fa-magic text-sm"></i></button>
-                            <select onchange="window.updateStatus('${l.id}', this.value)" class="text-[10px] font-black px-3 py-2 rounded-xl border-none outline-none ${getStatusStyle(l.status)} active:scale-95 shadow-sm">
+                             <button onclick="window.getAIPitch('${l.id}')" class="text-blue-500 bg-blue-50 w-10 h-10 rounded-full flex items-center justify-center active:scale-90 transition border border-blue-50"><i class="fas fa-magic text-sm"></i></button>
+                            <select onchange="window.updateStatus('${l.id}', this.value)" class="text-[10px] font-black px-3 py-2 rounded-xl border-none outline-none active:scale-95 shadow-sm ${getStatusStyle(l.status)}">
                                 <option value="new" ${l.status === 'new' ? 'selected' : ''}>NEW</option>
                                 <option value="follow-up" ${l.status === 'follow-up' ? 'selected' : ''}>FOLLOW-UP</option>
                                 <option value="converted" ${l.status === 'converted' ? 'selected' : ''}>CONVERTED</option>
@@ -575,137 +441,85 @@
                         </div>
                     </div>
                     <div class="grid grid-cols-4 gap-2">
-                        <a href="tel:${l.phone}" class="col-span-2 bg-blue-600 text-white h-14 rounded-2xl flex items-center justify-center gap-2 font-black shadow-lg active:scale-95 transition">
-                            <i class="fas fa-phone-alt"></i> CALL
-                        </a>
+                        <a href="tel:${l.phone}" class="col-span-2 bg-blue-600 text-white h-14 rounded-2xl flex items-center justify-center gap-2 font-black active:scale-95 transition shadow-lg"><i class="fas fa-phone-alt"></i> CALL</a>
                         <button onclick="window.openWA('${l.id}')" class="bg-green-100 text-green-600 rounded-2xl flex items-center justify-center active:scale-95 transition text-2xl"><i class="fab fa-whatsapp"></i></button>
                         <button onclick="window.shareLead('${l.id}')" class="bg-gray-100 text-gray-500 rounded-2xl flex items-center justify-center active:scale-95 transition text-lg"><i class="fas fa-share-alt"></i></button>
                     </div>
-                </div>
-            `;}).join('');
-
-            const lb = document.getElementById('load-more-btn');
-            if (lb) lb.classList.toggle('hidden', filtered.length <= renderLimit);
+                </div>`;
+            }).join('');
         };
 
         function renderLists() {
             const container = document.getElementById('lists-container');
             if(!container) return;
-            if (leadLists.length === 0 && initialSyncCount > 0) {
-                container.innerHTML = '<div class="col-span-full py-10 text-center text-gray-400 italic">No lists yet.</div>';
-                return;
-            }
             container.innerHTML = leadLists.map(list => {
                 const listLeads = leads.filter(l => l.listId === list.id);
                 const assignedId = listLeads.length > 0 ? listLeads[0].assignedTo : '';
                 return `
                     <div class="bg-white p-6 rounded-3xl border shadow-sm space-y-4 app-card">
                         <div class="flex justify-between items-start">
-                            <div class="flex-1" onclick="window.renameList('${list.id}')">
-                                <h4 class="font-bold text-lg text-blue-600">${list.name}</h4>
-                                <p class="text-xs text-gray-400 uppercase font-black tracking-tighter">${listLeads.length} Candidates</p>
-                            </div>
+                            <div class="flex-1" onclick="window.renameList('${list.id}')"><h4 class="font-bold text-lg text-blue-600">${list.name}</h4><p class="text-xs text-gray-400 font-black uppercase text-[9px] tracking-widest">${listLeads.length} Leads</p></div>
                             <button onclick="window.deleteList('${list.id}')" class="text-red-300 hover:text-red-500 p-2 active:scale-95 transition"><i class="fas fa-trash-alt"></i></button>
                         </div>
                         <div class="space-y-2 border-t pt-4">
-                            <label class="text-[10px] font-black text-gray-400 uppercase ml-1 tracking-widest">Ownership</label>
-                            <select onchange="window.bulkAssignList('${list.id}', this.value)" class="w-full p-4 bg-gray-50 rounded-2xl text-sm border-none outline-none font-bold cursor-pointer focus:ring-2 ring-blue-100">
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Team Assignment</label>
+                            <select onchange="window.bulkAssignList('${list.id}', this.value)" class="w-full p-4 bg-gray-50 rounded-2xl text-sm font-bold">
                                 <option value="">Assign Entire List...</option>
                                 ${staff.map(s => `<option value="${s.id}" ${assignedId === s.id ? 'selected' : ''}>${s.name}</option>`).join('')}
                             </select>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             }).join('');
         }
 
         function renderStaff() {
             const container = document.getElementById('staff-container');
             if(!container) return;
-            if (staff.length === 0 && initialSyncCount > 0) {
-                container.innerHTML = '<div class="col-span-full py-10 text-center text-gray-400 italic font-bold uppercase text-[10px] tracking-widest">No team registered.</div>';
-                return;
-            }
             container.innerHTML = staff.map(s => {
                 const sl = leads.filter(l => l.assignedTo === s.id);
-                const conv = sl.filter(l=>l.status==='converted').length;
                 return `<div class="bg-white p-6 rounded-3xl border shadow-sm app-card">
                     <div class="flex justify-between items-start mb-4">
                         <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 font-black text-xl shadow-inner">${s.name.charAt(0)}</div>
                         <button onclick="window.deleteStaff('${s.id}')" class="text-red-300 hover:text-red-500 p-2 active:scale-95 transition"><i class="fas fa-user-minus"></i></button>
                     </div>
                     <h4 class="font-bold text-lg">${s.name}</h4>
-                    <p class="text-xs text-gray-400 font-mono tracking-widest uppercase text-[9px]">ID: ${s.id}</p>
+                    <p class="text-xs text-gray-400 tracking-widest uppercase text-[9px]">ID: ${s.id}</p>
                     <div class="grid grid-cols-2 gap-2 mt-6 pt-4 border-t">
-                        <div class="bg-gray-50 p-3 rounded-2xl text-center"><p class="text-[9px] font-bold text-gray-400 uppercase">Bucket</p><p class="text-lg font-black text-gray-700">${sl.length}</p></div>
-                        <div class="bg-green-50 p-3 rounded-2xl text-center"><p class="text-[9px] font-bold text-green-400 uppercase tracking-tighter">Success</p><p class="text-lg font-black text-green-700">${conv}</p></div>
+                        <div class="bg-gray-50 p-3 rounded-2xl text-center"><p class="text-[9px] font-bold text-gray-400 uppercase">Bucket</p><p class="text-lg font-black">${sl.length}</p></div>
+                        <div class="bg-green-50 p-3 rounded-2xl text-center"><p class="text-[9px] font-bold text-green-400 uppercase tracking-tighter">Success</p><p class="text-lg font-black text-green-700">${sl.filter(l=>l.status==='converted').length}</p></div>
                     </div>
                 </div>`;
             }).join('');
         }
 
-        // --- DASHBOARD UI ---
         function updateLeaderboard() {
             const container = document.getElementById('leaderboard');
             if (!container) return;
-            const stats = staff.map(s => {
-                const count = leads.filter(l => l.assignedTo === s.id && l.status === 'converted').length;
-                return { name: s.name, count };
-            }).sort((a,b) => b.count - a.count);
-
+            const stats = staff.map(s => ({ name: s.name, count: leads.filter(l => l.assignedTo === s.id && l.status === 'converted').length })).sort((a,b) => b.count - a.count);
             container.innerHTML = stats.map((s, idx) => `
-                <div class="flex justify-between items-center bg-white/5 p-4 rounded-2xl border border-white/5 shadow-sm active:bg-white/10 transition mb-2">
-                    <div class="flex items-center gap-3">
-                        <span class="font-black text-gray-600 text-lg">${idx+1}</span>
-                        <span class="font-bold text-gray-200">${s.name}</span>
-                    </div>
-                    <span class="text-xs bg-green-500 text-white px-4 py-1.5 rounded-full font-black shadow-sm">${s.count} ADM</span>
-                </div>
-            `).join('') || '<p class="text-gray-500 text-center py-10 italic">Awaiting results...</p>';
+                <div class="flex justify-between items-center bg-white/5 p-4 rounded-2xl mb-2">
+                    <div class="flex items-center gap-3"><span class="font-black text-gray-600 text-lg">${idx+1}</span><span class="font-bold text-gray-200">${s.name}</span></div>
+                    <span class="text-xs bg-green-500 text-white px-4 py-1.5 rounded-full font-black">${s.count} ADM</span>
+                </div>`).join('');
         }
 
         // --- HELPERS ---
-        window.debouncedRenderLeads = () => { if(renderTimeout) clearTimeout(renderTimeout); renderTimeout = setTimeout(renderLeads, 150); };
+        window.debouncedRenderLeads = () => { if(renderTimeout) clearTimeout(renderTimeout); renderTimeout = setTimeout(renderLeads, 100); };
         window.loadMoreLeads = () => { renderLimit += 50; renderLeads(); };
-        window.notify = (m, type) => { const t = document.getElementById('toast'); document.getElementById('toast-msg').innerText = m; t.classList.remove('translate-y-20', 'opacity-0'); setTimeout(() => t.classList.add('translate-y-20', 'opacity-0'), 3000); };
+        window.notify = (m) => { const t = document.getElementById('toast'); document.getElementById('toast-msg').innerText = m; t.classList.remove('translate-y-20', 'opacity-0'); setTimeout(() => t.classList.add('translate-y-20', 'opacity-0'), 3000); };
         window.setProcessing = (v, text) => { isProcessing = v; document.getElementById('processing-text').innerText = text || "Processing..."; document.getElementById('processing-overlay').classList.toggle('hidden', !v); };
         
-        window.openLeadModal = (id = null) => {
-            editingLeadId = id;
-            const hList = document.getElementById('lead-history-list');
-            const hSec = document.getElementById('lead-history-section');
-            if (id) {
-                const l = leads.find(x => x.id === id);
-                if(!l) return;
-                document.getElementById('lead-name').value = l.name || '';
-                document.getElementById('lead-phone').value = l.phone || '';
-                document.getElementById('lead-notes').value = '';
-                document.getElementById('lead-followup').value = l.followup || '';
-                hSec.classList.remove('hidden');
-                hList.innerHTML = (l.history || []).map(h => `<div class="bg-gray-50 p-3 rounded-xl border text-[10px] shadow-sm mb-2"><span class="font-bold uppercase text-gray-400">${h.user} • ${h.date}</span><p class="text-gray-700 mt-1">${h.note}</p></div>`).reverse().join('');
-            } else {
-                document.querySelectorAll('#lead-modal input, #lead-modal textarea').forEach(i => i.value = '');
-                hSec.classList.add('hidden');
-            }
-            document.getElementById('lead-modal').classList.remove('hidden');
-        };
-
         window.saveEmployee = async () => {
             const n = document.getElementById('staff-name').value.trim(), i = document.getElementById('staff-id').value.trim(), p = document.getElementById('staff-pass').value.trim();
-            if(!n || !i || !p) return notify("All fields required");
-            setProcessing(true, "Creating Member...");
-            try {
-                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', i), { name: n, password: p, role: 'telecaller' });
-                closeStaffModal();
-                notify("Welcome, " + n);
-            } catch(e) { notify("Sync Failed"); }
+            if(!n || !i || !p) return notify("Missing Fields");
+            setProcessing(true, "Registering...");
+            try { await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', i), { name: n, password: p, role: 'telecaller' }); closeStaffModal(); notify("Staff Created"); } catch(e) { notify("Add Failed"); }
             setProcessing(false);
         };
 
         window.handleExcelUpload = (e) => {
             const f = e.target.files[0]; if (!f) return;
-            const label = prompt("Import Label:", f.name.split('.')[0]); if (!label) return;
-            const auto = document.getElementById('auto-assign-toggle').checked;
+            const label = prompt("Marketing Label:", f.name.split('.')[0]); if (!label) return;
             setProcessing(true, "Scanning Excel...");
             const reader = new FileReader();
             reader.onload = async (ev) => {
@@ -713,62 +527,56 @@
                     const wb = XLSX.read(new Uint8Array(ev.target.result), {type: 'array'});
                     const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 0, defval: "" });
                     const listRef = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'lead_groups'), { name: label, createdAt: Timestamp.now() });
-                    let imp = 0, sIdx = 0;
+                    let imp = 0;
                     for (let row of json) {
                         const n = {}; Object.keys(row).forEach(k => n[k.trim().toLowerCase()] = row[k]);
                         const ph = String(n.phone || n.mobile || n.contact || "").trim();
                         if (ph && !leads.some(l => l.phone === ph)) {
-                            const ass = auto && staff.length > 0 ? staff[sIdx % staff.length].id : window.currentUser.id;
-                            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'leads'), { name: n.name || n['full name'] || "", phone: ph, status: 'new', assignedTo: ass, listId: listRef.id, updatedAt: Timestamp.now(), createdAt: Timestamp.now(), history: [{date: new Date().toLocaleString(), user: 'System', note: 'Imported via Excel'}] });
-                            imp++; if(auto && staff.length > 0) sIdx++;
+                            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'leads'), { name: n.name || "", phone: ph, status: 'new', assignedTo: window.currentUser.id, listId: listRef.id, updatedAt: Timestamp.now(), createdAt: Timestamp.now(), history: [{date: new Date().toLocaleString(), user: 'System', note: 'Imported'}] });
+                            imp++;
                         }
                     }
-                    notify(`Imported: ${imp} leads`); showView('lists');
+                    notify(`Imported ${imp} Leads`); showView('lists');
                 } catch (err) { notify("Format Error"); }
                 setProcessing(false);
             };
             reader.readAsArrayBuffer(f);
         };
 
-        function getStatusStyle(s) { switch(s) { case 'new': return 'bg-blue-100 text-blue-700'; case 'follow-up': return 'bg-orange-100 text-orange-700'; case 'converted': return 'bg-green-100 text-green-700'; case 'rejected': return 'bg-red-100 text-red-700'; default: return 'bg-gray-100 text-gray-500'; } }
+        function getStatusStyle(s) { switch(s) { case 'new': return 'bg-blue-100 text-blue-700'; case 'follow-up': return 'bg-orange-100 text-orange-700'; case 'converted': return 'bg-green-100 text-green-700'; case 'rejected': return 'bg-red-100 text-red-700'; default: return 'bg-gray-100'; } }
         function updateStats() { const f = window.currentUser.role === 'admin' ? leads : leads.filter(l => l.assignedTo === window.currentUser.id); const today = new Date().toISOString().split('T')[0]; document.getElementById('stat-total').innerText = f.length; document.getElementById('stat-converted').innerText = f.filter(x => x.status === 'converted').length; document.getElementById('stat-pending').innerText = f.filter(x => x.followup && x.followup <= today && x.status !== 'converted' && x.status !== 'rejected').length; document.getElementById('stat-rejected').innerText = f.filter(x => x.status === 'rejected').length; }
         function updateChart() { const canvas = document.getElementById('analyticsChart'); if (!canvas) return; const counts = ['new', 'follow-up', 'converted', 'rejected'].map(s => leads.filter(x => x.status === s).length); if (myChart) myChart.destroy(); myChart = new Chart(canvas.getContext('2d'), { type: 'bar', data: { labels: ['New', 'Follow', 'Conv', 'Rej'], datasets: [{ data: counts, backgroundColor: ['#3b82f6', '#f97316', '#10b981', '#ef4444'], borderRadius: 12 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false } } } } }); }
+        function updateListFilters() { const fS = document.getElementById('filter-list'); if(!fS) return; const cur = fS.value; let h = '<option value="all">All Lists</option>'; h += leadLists.map(gl => `<option value="${gl.id}">${gl.name}</option>`).join(''); fS.innerHTML = h; fS.value = cur; }
         
         window.closeLeadModal = () => { document.getElementById('lead-modal').classList.add('hidden'); editingLeadId = null; };
         window.closeStaffModal = () => document.getElementById('staff-modal').classList.add('hidden');
         window.openStaffModal = () => { document.getElementById('staff-name').value=''; document.getElementById('staff-id').value=''; document.getElementById('staff-pass').value=''; document.getElementById('staff-modal').classList.remove('hidden'); };
-        window.copyToClipboard = (t) => { const el = document.createElement('textarea'); el.value = t; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); notify("Copied!"); };
+        window.copyToClipboard = (t) => { const el = document.createElement('textarea'); el.value = t; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); notify("Pitch Copied"); };
         window.getAIPitch = async (id) => {
             const l = leads.find(x => x.id === id); const modal = document.getElementById('ai-modal'); const content = document.getElementById('ai-content');
             modal.classList.remove('hidden'); content.innerHTML = '<div class="loader mx-auto"></div>';
             try {
                 const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: `Lead: ${l.name}. Notes: ${l.notes}. Write 2-sentence call script.` }] }] })
+                    body: JSON.stringify({ contents: [{ parts: [{ text: `Lead: ${l.name}. Context: ${l.notes}. Write 2-sentence call script.` }] }] })
                 });
                 const data = await res.json(); content.innerText = data.candidates?.[0]?.content?.parts?.[0]?.text || "AI Busy.";
             } catch(e) { content.innerText = "Error."; }
         };
 
-        window.deleteLead = async (id) => { if (confirm("Remove Lead?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', id)); };
-        window.deleteStaff = async (id) => { if (confirm("Remove Staff?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', id)); };
-        window.deleteList = async (id) => { if(confirm("Remove List?")){ setProcessing(true, "Clearing..."); try { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'lead_groups', id)); const del = leads.filter(l => l.listId === id); for(let d of del) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', d.id)); } catch(e){} setProcessing(false); } };
+        window.deleteLead = async (id) => { if (confirm("Delete Lead?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', id)); };
+        window.deleteStaff = async (id) => { if (confirm("Remove Member?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', id)); };
+        window.deleteList = async (id) => { if(confirm("Clear List?")){ setProcessing(true, "Clearing..."); try { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'lead_groups', id)); const del = leads.filter(l => l.listId === id); for(let d of del) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', d.id)); } catch(e){} setProcessing(false); } };
         window.bulkAssignList = async (listId, staffId) => { if(!staffId) return; setProcessing(true, "Moving..."); try { const move = leads.filter(l => l.listId === listId); for(let m of move) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', m.id), { assignedTo: staffId, updatedAt: Timestamp.now() }); } catch(e){} setProcessing(false); };
-        window.renameList = async (id) => { const list = leadLists.find(l => l.id === id); if (list) { const n = prompt("Rename list:", list.name); if(n && n !== list.name) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'lead_groups', id), { name: n }); } };
+        window.renameList = async (id) => { const list = leadLists.find(l => l.id === id); if (list) { const n = prompt("Rename:", list.name); if(n && n !== list.name) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'lead_groups', id), { name: n }); } };
         window.toggleSelectMode = (f) => { selectMode = f !== undefined ? f : !selectMode; selectedLeads.clear(); document.getElementById('batch-actions').classList.toggle('hidden', !selectMode); renderLeads(); };
         window.toggleLeadSelection = (id) => { if(selectedLeads.has(id)) selectedLeads.delete(id); else selectedLeads.add(id); document.getElementById('selected-count').innerText = `${selectedLeads.size} Selected`; };
-        window.batchDelete = async () => { if(confirm(`Delete ${selectedLeads.size} leads?`)){ setProcessing(true, "Batch Deleting..."); for(let id of selectedLeads) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', id)); toggleSelectMode(false); setProcessing(false); } };
-        window.batchStatusUpdate = async () => { const s = prompt("Update status to (new, follow-up, converted, rejected):", "follow-up"); if(s && ['new','follow-up','converted','rejected'].includes(s)){ setProcessing(true, "Batch Updating..."); for(let id of selectedLeads) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', id), { status: s, updatedAt: Timestamp.now() }); toggleSelectMode(false); setProcessing(false); } };
+        window.batchDelete = async () => { if(confirm(`Delete ${selectedLeads.size}?`)){ setProcessing(true, "Deleting..."); for(let id of selectedLeads) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', id)); toggleSelectMode(false); setProcessing(false); } };
+        window.batchStatusUpdate = async () => { const s = prompt("Update status:", "follow-up"); if(s && ['new','follow-up','converted','rejected'].includes(s)){ setProcessing(true, "Updating..."); for(let id of selectedLeads) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', id), { status: s, updatedAt: Timestamp.now() }); toggleSelectMode(false); setProcessing(false); } };
+        window.openWA = (id) => { const l = leads.find(x => x.id === id); if (!l) return; let p = l.phone.replace(/\D/g, ''); if (p.length === 10) p = '91' + p; window.open(`https://wa.me/${p}?text=${encodeURIComponent('Hello ' + (l.name || 'Candidate') + ', this is FutureU Institute. Are you still interested?')}`, '_blank'); };
+        window.exportCurrentLeads = () => { const ws = XLSX.utils.json_to_sheet(leads.map(l => ({ Name: l.name, Phone: l.phone, Status: l.status.toUpperCase(), Followup: l.followup || '' }))); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Leads"); XLSX.writeFile(wb, `FutureU_CRM.xlsx`); };
 
-        window.openWA = (id) => {
-            const l = leads.find(x => x.id === id);
-            if (!l) return;
-            let p = l.phone.replace(/\D/g, '');
-            if (p.length === 10) p = '91' + p; 
-            window.open(`https://wa.me/${p}?text=${encodeURIComponent('Hello ' + (l.name || 'Candidate') + ', this is FutureU Institute. Are you still interested in our professional programs?')}`, '_blank');
-        };
-
-        initAuth();
+        initCloudSession();
     </script>
 </body>
 </html>
